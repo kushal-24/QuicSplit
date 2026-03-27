@@ -78,3 +78,5 @@ const uploadAndProcessBill = asyncHandler(async (req, res) => {
         )
     );
 });
+
+export {uploadAndProcessBill}
