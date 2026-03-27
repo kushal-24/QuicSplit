@@ -36,7 +36,7 @@ const getGroupBalances = asyncHandler(async (req, res) => {
     balances[member.toString()] = 0;
   });
 
-  // 💸 5. Process expenses
+  //Process expenses
   expenses.forEach(exp => {
     const paidBy = exp.paidBy.toString();
 

@@ -15,3 +15,5 @@ const groupSchema= new Schema({
         ref: "User",
     }
 }, {timestamps: true})
+
+export default Group= mongoose.model('Group', groupSchema);

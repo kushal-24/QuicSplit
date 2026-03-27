@@ -54,4 +54,4 @@ settlementSchema.pre("save", function (next) {
 
 const Settlement = mongoose.model("Settlement", settlementSchema);
 
-export { Settlement };
+export default Settlement
