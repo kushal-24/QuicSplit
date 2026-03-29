@@ -10,10 +10,12 @@ const groupSchema= new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     },
-    members:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-    },
+    members:[
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+        },
+    ],
     thumbnail:{
         type: String,
     }

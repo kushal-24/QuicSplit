@@ -1,4 +1,5 @@
 import { StateGraph, MessagesAnnotation, MemorySaver } from "@langchain/langgraph";
+import { SystemMessage } from "@langchain/core/messages";
 import { llm } from "./llm.js";
 import {
   getExpensesTool, 
@@ -7,17 +8,30 @@ import {
   reduceXinYTool,
   deleteExpenseTool
 } from "./tools.js";
+import { getSystemPrompt } from "./prompt.js";
 
 const tools = [getExpensesTool, createExpenseTool, calculateGroupBalancesTool, reduceXinYTool, deleteExpenseTool];
 const llmWithTools = llm.bindTools(tools);
 
 // Node 1 — call the LLM
-async function callLLM(state) {
-  const response = await llmWithTools.invoke(state.messages);
+async function callLLM(state, config) {
+  const messages = state.messages;
+  const { groupId, memberNames } = config.configurable;
+
+  const hasSystem = messages[0]?._getType?.() === "system";
+
+  const finalMessages = hasSystem
+    ? messages
+    : [
+        new SystemMessage(getSystemPrompt( groupId, memberNames)),
+        ...messages
+      ];
+
+  const response = await llmWithTools.invoke(finalMessages);
   return { messages: [response] };
 }
 
-//Node 2 — execute whatever tool LLM decided to call
+// Node 2 — execute whatever tool LLM decided to call
 async function runTool(state) {
   const lastMessage = state.messages.at(-1);
   const results = [];
@@ -31,7 +45,7 @@ async function runTool(state) {
     if (toolCall.name === "getAccountBalancesNSettle") {
       results.push(await calculateGroupBalancesTool.invoke(toolCall.args));
     }
-    if (toolCall.name === "reduce Amt from A because he paid to B") {
+    if (toolCall.name === "transaction_n_settlement") {
       results.push(await reduceXinYTool.invoke(toolCall.args));
     }
     if (toolCall.name === "deleteExpense") {
@@ -41,14 +55,14 @@ async function runTool(state) {
   return { messages: results };
 }
 
-//Routing — did LLM call a tool or just reply?
+// Routing — did LLM call a tool or just reply?
 function shouldContinue(state) {
   const lastMessage = state.messages.at(-1);
   if (lastMessage.tool_calls?.length > 0) return "runTool";
   return "__end__";
 }
 
-const checkpointer= new MemorySaver()
+const checkpointer = new MemorySaver();
 
 const graph = new StateGraph(MessagesAnnotation)
   .addNode("callLLM", callLLM)
@@ -56,6 +70,6 @@ const graph = new StateGraph(MessagesAnnotation)
   .addEdge("__start__", "callLLM")
   .addConditionalEdges("callLLM", shouldContinue)
   .addEdge("runTool", "callLLM")
-  .compile({checkpointer});
+  .compile({ checkpointer });
 
 export default graph;

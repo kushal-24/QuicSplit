@@ -14,17 +14,20 @@ router.post("/:groupId/chat", verifyJWT, async (req, res) => {
 
     // fetch group to get member names for system prompt
     const group = await Group.findById(groupId).populate("members", "fullName");
-    const memberNames = group.members.map(m => m.name);
+    const memberNames = group.members.map(m => m.fullName);
 
     const result = await graph.invoke(
       {
         messages: [
-          new SystemMessage(getSystemPrompt(groupId, memberNames)),
           new HumanMessage(message),
         ],
       },
       {
-        configurable: { thread_id: threadId } // ← this is what maintains memory
+        configurable: { 
+          thread_id: threadId,
+          groupId: groupId,       
+          memberNames: memberNames
+         } // ← this is what maintains memoryyy
       }
     );
 
@@ -32,7 +35,7 @@ router.post("/:groupId/chat", verifyJWT, async (req, res) => {
     res.json({ reply });
 
   } catch (err) {
-    console.error(err);
+    console.error(err.message);
     res.status(500).json({ error: "AI layer failed" });
   }
 });

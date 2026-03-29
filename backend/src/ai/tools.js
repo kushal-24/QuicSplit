@@ -162,7 +162,7 @@ const reduceXinYTool= tool(async({groupId, amt, name1, name2})=>{
   await calculateGroupBalancesTool(groupId);
   //groupId, amt, name1, name2
 },{
-  name: "reduce Amt from A because he paid to B",
+  name: "transaction_n_settlement",
   description: "Create a settlement whenever we have to perform a transaction and then call the calculateGroupBalances() tool",
   schema: z.object({ 
     groupId: z.string(),
