@@ -13,7 +13,10 @@ const groupSchema= new Schema({
     members:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
+    },
+    thumbnail:{
+        type: String,
     }
 }, {timestamps: true})
 
-export default Group= mongoose.model('Group', groupSchema);
+export const Group= mongoose.model('Group', groupSchema);

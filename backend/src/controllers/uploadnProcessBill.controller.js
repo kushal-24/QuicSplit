@@ -1,9 +1,12 @@
 import { File } from "../models/file.model.js";
-import { Expense } from "../models/expense.model.js";
-import { Group } from "../models/group.model.js";
+import Expense from "../models/expense.model.js";
+import {Group} from "../models/group.model.js";
+import Settlement from "../models/settlement.model.js";
 import asyncHandler from "../utils/asyncHandler.js"
 import apiResponse from "../utils/apiResponse.js"
 import apiError from "../utils/apiError.js"
+import { getGroupBalances } from "./getBalances.controller.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const uploadAndProcessBill = asyncHandler(async (req, res) => {
     const { groupId } = req.params;
@@ -79,4 +82,91 @@ const uploadAndProcessBill = asyncHandler(async (req, res) => {
     );
 });
 
-export {uploadAndProcessBill}
+const createExpense= asyncHandler(async(req,res)=>{
+    const {groupId}= req.params;
+    const{amt, ppl, paidBy, name, description}=req.body;
+
+    if(!amt) throw new apiError(403, "Incomplete input");
+    if(!name) throw new apiError(403, "Incomplete input, pls provide your expense's Name as well");
+
+    const len=ppl.length;
+    const share=amt/len;
+
+    const participants=[];
+    for(const p of ppl){
+        participants.push({user: p, share: share}); //🚨🚨🚨🚨
+    }
+
+    const newExpense= await Expense.create({
+        paidBy: paidBy,
+        expenseName: name,
+        amount: amt,
+        group: groupId,
+        description: description||"",
+        participants: participants
+    })
+
+    if(!newExpense) throw new apiError(404, "Server request failed to create newExpense");
+
+    const result = await getGroupBalances(groupId);
+    
+    return res
+    .status(200)
+    .json(
+        new apiResponse({
+            message: "Expense created",
+            balances: result.balances,
+            transactions: result.transactions
+        }, 200, "success"));
+})
+
+const deleteExpense = asyncHandler(async (req, res) => {
+    const {groupId} = req.params;
+    const {expId} = req.params;
+  
+    await Expense.findByIdAndDelete(expId);
+    const result = await getGroupBalancesInternal(groupId);
+  
+    return res.status(200).json(
+      new apiResponse(
+        {
+          message: `Expense "${tobedeleted.expenseName}" deleted`,
+          balances: result.balances,
+          transactions: result.transactions
+        },
+        200,
+        "Expense deleted successfully"
+      )
+    );
+});
+
+const createSettlement = asyncHandler(async (req, res) => {
+    const{groupId}= req.parms
+    const { from, to, amount, note } = req.body;
+  
+    const group = await Group.findById(groupId);
+    if (!group) throw new apiError(404, "Group not found");
+  
+    await Settlement.create({ 
+        group: groupId, 
+        from, 
+        to, 
+        amount, 
+        note 
+    });
+  
+    const result = await calculateGroupBalances(groupId);
+  
+    return res.status(201).json(new apiResponse({
+      balances: result.balances,
+      transactions: result.transactions
+    }, 201, "Settlement created"));
+});
+
+
+export {
+    uploadAndProcessBill,
+    createExpense,
+    deleteExpense,
+    createSettlement
+}

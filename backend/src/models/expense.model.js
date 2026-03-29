@@ -15,6 +15,10 @@ const participantSchema = new Schema({
 
 const expenseSchema = new mongoose.Schema(
   {
+    expenseName:{
+      type: String,
+      required: true,
+    },
     group: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Group",
@@ -26,18 +30,15 @@ const expenseSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-
     amount: {
       type: Number,
       required: true,
       min: 0,
     },
-
     description: {
       type: String,
       trim: true,
     },
-
     participants: {
       type: [participantSchema],
       validate: {

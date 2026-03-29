@@ -19,7 +19,11 @@ app.use(express.urlencoded({extended: true, limit:"16kb"}));
 app.use(express.static("public"))
 app.use(cookieParser());
 
+import userRouter from "./routes/user.router.js"
+import groupRouter from "./routes/group.router.js"
 
-// app.use('/api/v1/user/', userRouter);
+
+app.use('/api/v1/user/', userRouter);
+app.use('/api/v1/group/', groupRouter);
 
 export {app}

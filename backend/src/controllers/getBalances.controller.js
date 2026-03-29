@@ -36,7 +36,7 @@ const getGroupBalances = asyncHandler(async (req, res) => {
     balances[member.toString()] = 0;
   });
 
-  //Process expenses
+  //  Process expenses
   expenses.forEach(exp => {
     const paidBy = exp.paidBy.toString();
 
@@ -98,7 +98,6 @@ const getGroupBalances = asyncHandler(async (req, res) => {
     if (credit.amount === 0) j++;
   }
 
-  // 👤 8. Populate user details (optional but useful)
   const populatedTransactions = await Promise.all(
     transactions.map(async t => {
       const fromUser = await User.findById(t.from).select("fullName");
