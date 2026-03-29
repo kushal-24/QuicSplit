@@ -1,6 +1,7 @@
 import { User } from "../models/user.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import apiError from "../utils/apiError.js";
+
 import apiResponse from "../utils/apiResponse.js";
 
 const generateAccessAndRefreshToken = async (userId) => {
@@ -63,7 +64,7 @@ const userLogin = asyncHandler(async (req, res, next) => {
     if (!email) {
         throw new apiError(400, "Fill in the details first")
     }
-    const user = await User.findOne({email})
+    const user = await User.findOne({email: email})
 
     if (!user) {
         throw new apiError(404, "No user registered found");
@@ -78,7 +79,7 @@ const userLogin = asyncHandler(async (req, res, next) => {
     const isPasswordValid = await user.isPassCorrect(password)
 
     if (!isPasswordValid) {
-        throw new apiError(400, "go away, wrong password, no more chances")
+        throw new apiError(401, "Invalid email or password")
     }
 
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id)

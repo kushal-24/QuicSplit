@@ -13,7 +13,8 @@ const connectDB=async()=>{
         console.log("URI:", process.env.MONGODB_URI);
         console.log("xonnectione rror:", err);
         process.exit();
-    }
+    }//MONGODB_URI=mongodb+srv://24mm01019:kushal2015@teamsplit.op1yqam.mongodb.net/
+
 }
 
 export default connectDB
