@@ -1,8 +1,8 @@
 import { tool } from "@langchain/core/tools";
 import { z } from "zod";
-import Expense from "../models/expense.model.js";
-import Settlement from "../models/settlement.model.js";
-import Group from "../models/group.model.js"
+import {Expense} from "../models/expense.model.js";
+import {Settlement} from "../models/settlement.model.js";
+import {Group} from "../models/group.model.js"
 import { User } from "../models/user.model.js";
 import fuzzy from "fuzzysort"
 

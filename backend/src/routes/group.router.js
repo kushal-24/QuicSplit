@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { verifyJWT } from "../middlewares/auth.middleware";
-import { addMember, createGroup, deleteGroup, editGroup, getAllGroups, getGroup, removeMember } from "../controllers/group.controller";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { addMember, createGroup, deleteGroup, editGroup, getAllGroups, getGroup, removeMember } from "../controllers/group.controller.js";
 
 const router= new Router()
 

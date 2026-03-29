@@ -1,7 +1,7 @@
-import { Expense } from "../models/expense.model.js";
-import { Settlement } from "../models/settlement.model.js";
-import { Group } from "../models/group.model.js";
-import { User } from "../models/user.model.js";
+import {Expense} from "../models/expense.model.js";
+import {Settlement} from "../models/settlement.model.js";
+import {Group} from "../models/group.model.js";
+import {User} from "../models/user.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import apiError from "../utils/apiError.js";
 import apiResponse from "../utils/apiResponse.js";

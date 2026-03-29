@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { changeUserPass, createUser, deleteUser, getAllUsers, getUserDetails, refreshAccessToken, updateFullName, userLogin, userLogout } from "../controllers/user.controller";
-import { verifyJWT } from "../middlewares/auth.middleware";
+import { changeUserPass, createUser, deleteUser, getAllUsers, getUserDetails, refreshAccessToken, updateFullName, userLogin, userLogout } from "../controllers/user.controller.js";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router= new Router();
 

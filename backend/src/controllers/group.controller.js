@@ -1,6 +1,6 @@
-import asyncHandler from "../utils/asyncHandler";
-import apiError from "../utils/apiError";
-import apiResponse from "../utils/apiResponse";
+import asyncHandler from "../utils/asyncHandler.js";
+import apiError from "../utils/apiError.js";
+import apiResponse from "../utils/apiResponse.js";
 import {Group} from "../models/group.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { getGroupBalances } from "./getBalances.controller.js";
