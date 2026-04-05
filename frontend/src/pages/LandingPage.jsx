@@ -67,7 +67,7 @@ export default function LandingPage() {
 
           {/* Middle Text - Centered vertically in its space */}
           <div className="max-w-md my-auto">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-[64px] font-[500] text-[#25394B] dark:text-white leading-[1.05] tracking-tight mb-6 md:mb-8 min-h-[160px] md:min-h-[220px]">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-[64px] font-medium text-[#25394B] dark:text-white leading-[1.05] tracking-tight mb-6 md:mb-8 min-h-[160px] md:min-h-[220px]">
               {typedHeading}
               <span className="animate-[pulse_1s_infinite] inline-block ml-1 opacity-60">|</span>
             </h1>
@@ -90,16 +90,16 @@ export default function LandingPage() {
 
       {/* Right Column Container */}
       <div className="w-full md:w-[55%] lg:w-[60%] p-3 md:p-6 lg:p-8 flex items-center justify-center h-[60vh] md:h-screen lg:h-screen">
-        <div className="w-full h-full relative overflow-hidden rounded-[2rem] shadow-2xl bg-[#1A1F2E]">
+        <div className="w-full h-full relative overflow-hidden rounded-4xl shadow-2xl bg-[#1A1F2E]">
           <img 
             src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" 
             alt="Abstract presentation" 
             className="w-full h-full object-cover opacity-80 mix-blend-luminosity hover:mix-blend-normal hover:scale-105 transition-all duration-1000 ease-in-out cursor-pointer"
           />
           {/* Grid Overlay to match dribbble look */}
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-size-[40px_40px] pointer-events-none"></div>
           {/* Subtle color overlay */}
-          <div className="absolute inset-0 bg-gradient-to-tr from-[#25394B]/60 via-[#1A2A3A]/40 to-transparent pointer-events-none"></div>
+          <div className="absolute inset-0 bg-linear-to-tr from-[#25394B]/60 via-[#1A2A3A]/40 to-transparent pointer-events-none"></div>
         </div>
       </div>
     </div>

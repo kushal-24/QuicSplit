@@ -1,7 +1,8 @@
 import React from 'react'
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
+import { getMeApi, loginApi, logoutApi } from '../Api/auth.api';
 
-const authContext = createContext(null) //esse ek storage box bana diya hai maine
+const AuthContext = createContext(null) //esse ek storage box bana diya hai maine
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
@@ -26,7 +27,7 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
-    const login = async ({ mail, password }) => {
+    const login = async ({ email, password }) => {
         try {
             const res = await loginApi({ email, password });
             console.log("LOGIN RESPONSE USER:", res.data.data.user);
@@ -40,7 +41,31 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
+    const logout= async()=>{
+        try {
+            await logoutApi();
+        } catch (error) {
+            console.log(error);
+        }
+        finally{
+            setUser(null);
+        }
+    }
 
+    return(
+        <AuthContext.Provider 
+        value={{
+        user,
+        isAuthenticated: !!user,
+        loading,
+        login,
+        logout,
+        checkAuth
+        }}
+        >
+        {children}
+        </AuthContext.Provider>
+    )
 
 }
 

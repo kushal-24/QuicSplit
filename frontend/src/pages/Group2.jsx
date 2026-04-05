@@ -22,12 +22,12 @@ export default function Group2() {
       
       {/* Background Aesthetic */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
-        <div className="absolute top-0 left-0 right-0 h-[800px] bg-gradient-to-br from-[#6B5AED]/20 via-[#6B5AED]/5 to-transparent blur-[130px]"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-size-[40px_40px]"></div>
+        <div className="absolute top-0 left-0 right-0 h-[800px] bg-linear-to-br from-[#6B5AED]/20 via-[#6B5AED]/5 to-transparent blur-[130px]"></div>
       </div>
 
       {/* Main OS-style App Window */}
-      <div className="bg-[#12141a]/95 backdrop-blur-2xl border border-slate-800/80 rounded-[2rem] flex flex-col flex-1 relative z-10 shadow-2xl overflow-hidden w-full max-w-7xl mx-auto">
+      <div className="bg-[#12141a]/95 backdrop-blur-2xl border border-slate-800/80 rounded-4xl flex flex-col flex-1 relative z-10 shadow-2xl overflow-hidden w-full max-w-7xl mx-auto">
         
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-slate-800/80 bg-[#12141a]">
@@ -130,15 +130,15 @@ export default function Group2() {
       {/* Floating Action Button for AI Chat on Mobile */}
       <button 
         onClick={() => setIsAiModalOpen(true)}
-        className="lg:hidden fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-[#6B5AED] to-[#8879FF] rounded-full flex items-center justify-center shadow-[0_4px_20px_rgba(107,90,237,0.5)] text-white z-50 hover:scale-105 active:scale-95 transition-all"
+        className="lg:hidden fixed bottom-6 right-6 w-14 h-14 bg-linear-to-r from-[#6B5AED] to-[#8879FF] rounded-full flex items-center justify-center shadow-[0_4px_20px_rgba(107,90,237,0.5)] text-white z-50 hover:scale-105 active:scale-95 transition-all"
       >
         <MessageSquare size={24} />
       </button>
 
       {/* AI Chat Modal for Mobile */}
       {isAiModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-lg bg-[#12141a] border border-slate-800 rounded-[2rem] overflow-hidden flex flex-col h-[85vh] sm:h-[600px] shadow-2xl animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300">
+        <div className="fixed inset-0 z-100 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="w-full max-w-lg bg-[#12141a] border border-slate-800 rounded-4xl overflow-hidden flex flex-col h-[85vh] sm:h-[600px] shadow-2xl animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300">
              <div className="flex items-center justify-between p-5 border-b border-slate-800/80 bg-[#12141a]">
                <div className="flex items-center gap-2">
                  <div className="w-8 h-8 rounded-full bg-[#6B5AED]/20 flex items-center justify-center">

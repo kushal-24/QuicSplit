@@ -30,10 +30,10 @@ export default function Login() {
         </button>
       </div>
 
-      <div className="w-full max-w-[480px] bg-white dark:bg-[#1A1F2E] rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] p-6 md:p-8 transition-all duration-500 relative overflow-hidden">
+      <div className="w-full max-w-[480px] bg-white dark:bg-[#1A1F2E] rounded-4xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] p-6 md:p-8 transition-all duration-500 relative overflow-hidden">
         
         {/* Top Decorative Blob/Gradient */}
-        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-br from-[#6B5AED]/10 dark:from-[#6B5AED]/20 to-transparent -z-10 blur-xl"></div>
+        <div className="absolute top-0 left-0 right-0 h-32 bg-linear-to-br from-[#6B5AED]/10 dark:from-[#6B5AED]/20 to-transparent -z-10 blur-xl"></div>
         <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#6B5AED]/20 dark:bg-[#6B5AED]/30 rounded-full blur-2xl"></div>
 
         {/* Header */}
