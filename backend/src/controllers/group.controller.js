@@ -162,6 +162,12 @@ const getGroup = asyncHandler(async (req, res) => {
 
   const { balances, transactions } = await getGroupBalances(groupId);
 
+  const totalExpenses= await Expense.aggregate([
+        {$match: {groupId: group._id}},
+        {$group: {_id: null, total: {$sum: "$amount"}}}
+      ])
+      const totalSpent = totalExpenses[0]?.total || 0
+
   return res.status(200).json(
     new apiResponse(
       {
@@ -173,7 +179,8 @@ const getGroup = asyncHandler(async (req, res) => {
           members: group.members
         },
         balances,
-        transactions
+        transactions,
+        totalSpent
       },
       200,
       "Group fetched successfully"

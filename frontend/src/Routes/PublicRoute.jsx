@@ -13,9 +13,11 @@ const publicRoute= ({children})=>{
         )
     }
     if(isAuthenticated){
-        return <Navigate to="/boards" replace />;
+        return <Navigate to="/groups" replace />;
     }
 
     return children;
     
 }
+
+export default publicRoute

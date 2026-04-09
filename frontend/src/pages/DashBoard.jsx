@@ -1,22 +1,16 @@
-import React, { useState } from 'react';
-import { 
-  Combine, 
-  Settings, 
-  LogOut, 
-  Plus, 
-  TrendingUp,
-  Receipt,
-  ChevronDown,
-  Users
-} from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Combine, Settings, LogOut, Plus, TrendingUp, Receipt, ChevronDown,Users} from 'lucide-react';
+import { getDashboardData } from '../Api/group.api';
+import { useNavigate } from 'react-router-dom';
+
 
 const MOCK_GROUPS = [
   {
     id: 1,
     name: "Goa Trip",
     emoji: "🏖️",
-    totalExpenses: "₹45,000",
-    balance: -2500, // You owe
+    totalSpent: "₹45,000",
+    myBalance: -2500, // You owe
     members: [
       "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop",
       "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop",
@@ -50,9 +44,20 @@ const MOCK_GROUPS = [
 ];
 
 export default function DashBoard() {
+  const navigate= useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  // Change to [] to see the empty state!
   const [groups, setGroups] = useState(MOCK_GROUPS); 
+  useEffect(() => {
+    const fetchAllData = async () => {
+      try {
+        const response = await getDashboardData();
+        setGroups(response.data);
+      } catch (error) {
+        console.error('Error fetching groups:', error);
+      }
+    };
+    fetchAllData();
+  }, []); 
 
   return (
     <div className="min-h-screen bg-[#0A0D14] font-sans text-slate-200 relative">
@@ -60,7 +65,7 @@ export default function DashBoard() {
       {/* Background Gradients & Grid */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
-        <div className="absolute top-0 left-0 right-0 h-[800px] bg-gradient-to-br from-[#6B5AED]/30 via-[#6B5AED]/5 to-transparent blur-[130px]"></div>
+        <div className="absolute top-0 left-0 right-0 h-[800px] bg-linear-to-br from-[#6B5AED]/30 via-[#6B5AED]/5 to-transparent blur-[130px]"></div>
         <div className="absolute bottom-[-200px] right-[-100px] w-[800px] h-[800px] bg-[#6B5AED]/20 rounded-full blur-[150px]"></div>
         <div className="absolute top-[40%] left-[-10%] w-[600px] h-[600px] bg-[#6B5AED]/10 rounded-full blur-[120px]"></div>
       </div>
@@ -136,13 +141,14 @@ export default function DashBoard() {
             {groups.map((group) => (
               <div 
                 key={group.id} 
-                className="bg-[#1A1F2E]/60 backdrop-blur-md border border-slate-800/80 rounded-[1.5rem] p-6 hover:border-[#6B5AED]/50 hover:bg-[#1A1F2E]/90 hover:-translate-y-1 transition-all duration-300 flex flex-col group cursor-pointer shadow-lg hover:shadow-[0_8px_30px_rgba(107,90,237,0.15)]"
-              >
+                onClick={()=>navigate(`/groups/${group.id}`)}
+                className="bg-[#1A1F2E]/60 backdrop-blur-md border border-slate-800/80 rounded-3xl p-6 hover:border-[#6B5AED]/50 hover:bg-[#1A1F2E]/90 hover:-translate-y-1 transition-all duration-300 flex flex-col group cursor-pointer shadow-lg hover:shadow-[0_8px_30px_rgba(107,90,237,0.15)]">
                 {/* Card Top */}
+
                 <div className="flex justify-between items-start mb-6">
                   <div className="flex items-center gap-4">
                     <div className="w-14 h-14 rounded-2xl bg-slate-800/50 flex items-center justify-center text-3xl group-hover:bg-[#6B5AED]/20 group-hover:scale-105 transition-all">
-                      {group.emoji}
+                      {group.grpName} {/* TENTATIVE HAI */}
                     </div>
                     <div>
                       <h3 className="text-xl font-semibold text-white group-hover:text-[#8879FF] transition-colors">{group.name}</h3>
@@ -157,19 +163,19 @@ export default function DashBoard() {
                     <p className="text-xs text-slate-400 font-medium mb-1.5 flex items-center gap-1.5">
                       <Receipt size={14} className="text-slate-500"/> Total Expenses
                     </p>
-                    <p className="text-[#8879FF] font-semibold text-lg">{group.totalExpenses}</p>
+                    <p className="text-[#8879FF] font-semibold text-lg">{group.totalSpent}</p>
                   </div>
                   <div className="bg-[#0A0D14]/50 rounded-xl p-4 border border-slate-800/50">
                     <p className="text-xs text-slate-400 font-medium mb-1.5 flex items-center gap-1.5">
                       <TrendingUp size={14} className="text-slate-500"/> My Balance
                     </p>
                     <p className={`font-semibold text-lg ${
-                      group.balance < 0 ? 'text-red-400' : 
-                      group.balance > 0 ? 'text-green-400' : 
+                      group.myBalance < 0 ? 'text-red-400' : 
+                      group.myBalance > 0 ? 'text-green-400' : 
                       'text-slate-300'
                     }`}>
-                      {group.balance < 0 ? `You owe ₹${Math.abs(group.balance)}` : 
-                       group.balance > 0 ? `Owed ₹${group.balance}` : 
+                      {group.myBalance < 0 ? `You owe ₹${Math.abs(group.myBalance)}` : 
+                       group.myBalance > 0 ? `Owed ₹${group.myBalance}` : 
                        'Settled up'}
                     </p>
                   </div>
@@ -178,14 +184,14 @@ export default function DashBoard() {
                 {/* Card Footer: Avatars */}
                 <div className="mt-auto flex items-center justify-between pt-5 border-t border-slate-800/50">
                   <div className="flex -space-x-3 hover:space-x-0 transition-all duration-300">
-                    {group.members.slice(0, 3).map((member, idx) => (
+                    {/* {group.members.slice(0, 3).map((member, idx) => (
                       <img 
                         key={idx} 
                         src={member} 
                         className="w-9 h-9 rounded-full border-2 border-[#1A1F2E] object-cover hover:z-10 hover:scale-110 transition-transform" 
                         alt="Member avatar"
                       />
-                    ))}
+                    ))} */}
                     {group.members.length > 3 && (
                       <div className="w-9 h-9 rounded-full border-2 border-[#1A1F2E] bg-slate-800 flex items-center justify-center text-xs font-medium text-slate-300 z-10">
                         +{group.members.length - 3}
@@ -199,7 +205,9 @@ export default function DashBoard() {
               </div>
             ))}
           </div>
-        ) : (
+        ) : 
+        
+        (
           /* Empty State */
           <div className="flex flex-col items-center justify-center py-20 px-4 text-center bg-[#1A1F2E]/30 backdrop-blur-sm border border-slate-800/50 rounded-3xl border-dashed">
             <div className="w-24 h-24 bg-[#6B5AED]/10 rounded-full flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(107,90,237,0.15)] relative">
@@ -217,14 +225,12 @@ export default function DashBoard() {
             
             <button 
               onClick={() => {}} 
-              className="bg-[#6B5AED] hover:bg-[#5a4add] text-white px-8 py-3.5 rounded-xl flex items-center justify-center gap-2 font-semibold transition-all shadow-[0_4px_12px_rgba(107,90,237,0.3)] hover:shadow-[0_6px_16px_rgba(107,90,237,0.4)] active:scale-95"
-            >
+              className="bg-[#6B5AED] hover:bg-[#5a4add] text-white px-8 py-3.5 rounded-xl flex items-center justify-center gap-2 font-semibold transition-all shadow-[0_4px_12px_rgba(107,90,237,0.3)] hover:shadow-[0_6px_16px_rgba(107,90,237,0.4)] active:scale-95">
               <Plus size={22} />
               Create your first group
             </button>
           </div>
         )}
-
       </main>
     </div>
   );

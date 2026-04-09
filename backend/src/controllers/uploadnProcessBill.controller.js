@@ -163,10 +163,20 @@ const createSettlement = asyncHandler(async (req, res) => {
     }, 201, "Settlement created"));
 });
 
+const getExpenses= asyncHandler(async(req,res)=>{
+    const {groupId}= req.params;
+    const expenses= await Expense.find({group: groupId}).populate("paidBy", "fullName");
+    if(!expenses){
+        throw new apiError(404, "No expenses found");
+    }
+    return res.status(200).json(new apiResponse(expenses, 200, "success"));
+})
+
 
 export {
     uploadAndProcessBill,
     createExpense,
     deleteExpense,
-    createSettlement
+    createSettlement,
+    getExpenses
 }

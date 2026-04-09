@@ -1,27 +1,22 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 
-const MOCK_SETTLEMENTS = [
-  { id: 1, from: 'You', to: 'Raj', reason: 'from hotel split', amount: '50' },
-  { id: 2, from: 'Priya', to: 'Harsh', reason: 'from dinner', amount: '300' },
-];
-
-export default function SettlementList() {
+export default function SettlementList({ transactions }) {
   const handleSettle = () => {
     console.log('API: mark settlement complete');
   };
 
   return (
     <div className="animate-in fade-in duration-300">
-      <h3 className="text-slate-300 font-medium mb-6">{MOCK_SETTLEMENTS.length} pending settlements</h3>
+      <h3 className="text-slate-300 font-medium mb-6">{transactions?.length || 0} pending settlements</h3>
       <div className="flex flex-col gap-3">
-        {MOCK_SETTLEMENTS.map(settlement => (
-          <div key={settlement.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 bg-[#1A1F2E]/40 border border-slate-800/80 rounded-2xl hover:bg-[#1A1F2E]/80 transition-colors gap-3 sm:gap-4">
+        {transactions?.map((settlement, index) => (
+          <div key={index} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 bg-[#1A1F2E]/40 border border-slate-800/80 rounded-2xl hover:bg-[#1A1F2E]/80 transition-colors gap-3 sm:gap-4">
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2 text-white font-semibold text-base">
-                {settlement.from} <ArrowRight size={14} className="text-slate-400" /> {settlement.to}
+                {settlement.from?.name} <ArrowRight size={14} className="text-slate-400" /> {settlement.to?.name}
               </div>
-              <p className="text-sm text-slate-400">{settlement.reason}</p>
+              <p className="text-sm text-slate-400">settlement</p>
             </div>
             <div className="flex items-center gap-5">
               <span className="text-red-400 font-bold text-lg">₹{settlement.amount}</span>

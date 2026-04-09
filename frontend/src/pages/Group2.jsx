@@ -9,12 +9,8 @@ const MOCK_EXPENSES = [
   { id: 3, title: 'Scooter rentals', paidBy: 'You', date: '14 Jan', subtitle: '', amount: '1,000', myShare: '750', type: 'get' },
 ];
 
-const MOCK_SETTLEMENTS = [
-  { id: 1, from: 'You', to: 'Raj', amount: '50' },
-  { id: 2, from: 'Priya', to: 'Harsh', amount: '300' },
-];
 
-export default function Group2() {
+export default function Group2({expenses,transactions,balances,loading}) {
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
 
   return (
@@ -48,7 +44,7 @@ export default function Group2() {
           <div className="flex items-center gap-6">
             <div className="hidden sm:flex items-center gap-2">
               <span className="text-slate-400 font-medium text-sm">total spent</span>
-              <span className="text-white font-bold text-lg">₹4,200</span>
+              <span className="text-white font-bold text-lg">₹{expenses || 0}</span>
             </div>
             <button className="px-5 py-2 border border-slate-700/80 rounded-full hover:bg-white/10 text-slate-200 text-sm font-medium transition-colors">
               + invite
@@ -95,12 +91,12 @@ export default function Group2() {
               </div>
               <div className="flex-1 overflow-y-auto px-6 pb-6 custom-scrollbar">
                 <div className="space-y-3">
-                  {MOCK_SETTLEMENTS.map(settlement => (
-                    <div key={settlement.id} className="flex items-center justify-between p-4 bg-[#1A1F2E]/30 border border-slate-800/80 rounded-xl hover:bg-[#1A1F2E]/60 transition-colors">
+                  {transactions?.map((settlement, index) => (
+                    <div key={index} className="flex items-center justify-between p-4 bg-[#1A1F2E]/30 border border-slate-800/80 rounded-xl hover:bg-[#1A1F2E]/60 transition-colors">
                       <p className="text-white font-medium text-sm sm:text-base flex items-center">
-                        {settlement.from} 
+                        {settlement.from?.name} 
                         <ArrowRight className="mx-2 text-slate-500" size={14}/> 
-                        {settlement.to} 
+                        {settlement.to?.name} 
                         <span className="ml-2 font-bold">₹{settlement.amount}</span>
                       </p>
                       <button className="px-3 py-1.5 border border-[#304B3B] text-[#4ADE80] bg-[#4ADE80]/10 rounded-full text-xs font-semibold hover:bg-[#4ADE80]/20 transition-colors">
