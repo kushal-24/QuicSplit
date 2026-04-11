@@ -12,39 +12,47 @@ export default function GroupPage() {
 
   const { groupId } = useParams()
 
+  const fetchGroupData = async () => {
+        try {
+          const groupData = await getGroup(groupId);
+          setBalances(groupData.data.balances);
+          setTransactions(groupData.data.transactions);
+          setExpenses(groupData.data.totalSpent)
+        } catch (error) {
+          console.log("errorrr in fetching group , i.e", error);
+        }
+        finally {
+          setLoading(false);
+        }
+    }
+
   useEffect(() => {
-    const handleResize = async() => {
+    const handleResize = async () => {
       setIsDesktop(window.innerWidth >= 768);
-      
-      try {
-        const groupData= await getGroup(groupId);
-        setBalances(groupData.data.balances);
-        setTransactions(groupData.data.transactions);
-        setExpenses(groupData.data.totalSpent)   
-      } catch (error) {
-        console.log("errorrr in fetching group , i.e", error);
-      }
-      finally{
-        setLoading(false);  
-      }
     };
+    
     // Set initial size
+    fetchGroupData();
     handleResize();
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  return isDesktop ? <Group2 
+  return isDesktop ? <Group2
+    onFetchGroupData={fetchGroupData}
+    groupId={groupId}
     expenses={expenses}
     transactions={transactions}
     balances={balances}
     loading={loading}
-  /> : 
-  <Group 
-    expenses={expenses}
-    transactions={transactions}
-    balances={balances}
-    loading={loading}
-  />;
+  /> :
+    <Group
+      onFetchGroupData={fetchGroupData}
+      groupId={groupId}
+      expenses={expenses}
+      transactions={transactions}
+      balances={balances}
+      loading={loading}
+    />;
 }

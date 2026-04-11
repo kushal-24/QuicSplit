@@ -10,7 +10,7 @@ const MOCK_EXPENSES = [
 ];
 
 
-export default function Group2({expenses,transactions,balances,loading}) {
+export default function Group2({groupId,expenses,transactions,balances,loading, onFetchGroupData}) {
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
 
   return (
@@ -116,7 +116,9 @@ export default function Group2({expenses,transactions,balances,loading}) {
               <h2 className="text-xs font-bold tracking-wider text-slate-400 uppercase">AI Assistant</h2>
             </div>
             <div className="flex-1 p-6 pt-0 overflow-hidden">
-               <AiChat />
+               <AiChat 
+               onFetchGroupData={onFetchGroupData}
+               groupId={groupId} />
             </div>
           </div>
 

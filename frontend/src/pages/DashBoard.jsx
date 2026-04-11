@@ -3,11 +3,10 @@ import { Combine, Settings, LogOut, Plus, TrendingUp, Receipt, ChevronDown,Users
 import { getDashboardData } from '../Api/group.api';
 import { useNavigate } from 'react-router-dom';
 
-
 const MOCK_GROUPS = [
   {
-    id: 1,
-    name: "Goa Trip",
+    _id: 1,
+    grpName: "Goa Trip",
     emoji: "🏖️",
     totalSpent: "₹45,000",
     myBalance: -2500, // You owe
@@ -18,22 +17,22 @@ const MOCK_GROUPS = [
     ]
   },
   {
-    id: 2,
-    name: "Apartment Rent",
+    _id: 2,
+    grpName: "Apartment Rent",
     emoji: "🏢",
     totalExpenses: "₹30,000",
-    balance: 5000, // Owed to you
+    myBalance: 5000, // Owed to you
     members: [
       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
       "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop"
     ]
   },
   {
-    id: 3,
-    name: "Friday Dinner",
+    _id: 3,
+    grpName: "Friday Dinner",
     emoji: "🍔",
     totalExpenses: "₹4,500",
-    balance: 0, // Settled
+    myBalance: 0, // Settled
     members: [
       "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
       "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=100&h=100&fit=crop",
@@ -51,7 +50,7 @@ export default function DashBoard() {
     const fetchAllData = async () => {
       try {
         const response = await getDashboardData();
-        setGroups(response.data);
+        setGroups(response.data.data);
       } catch (error) {
         console.error('Error fetching groups:', error);
       }
@@ -138,10 +137,10 @@ export default function DashBoard() {
         {/* Groups Grid */}
         {groups.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {groups.map((group) => (
+            {groups?.map((group) => (
               <div 
-                key={group.id} 
-                onClick={()=>navigate(`/groups/${group.id}`)}
+                key={group._id} 
+                onClick={()=>navigate(`/groups/${group._id}`)}
                 className="bg-[#1A1F2E]/60 backdrop-blur-md border border-slate-800/80 rounded-3xl p-6 hover:border-[#6B5AED]/50 hover:bg-[#1A1F2E]/90 hover:-translate-y-1 transition-all duration-300 flex flex-col group cursor-pointer shadow-lg hover:shadow-[0_8px_30px_rgba(107,90,237,0.15)]">
                 {/* Card Top */}
 
@@ -151,7 +150,7 @@ export default function DashBoard() {
                       {group.grpName} {/* TENTATIVE HAI */}
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold text-white group-hover:text-[#8879FF] transition-colors">{group.name}</h3>
+                      <h3 className="text-xl font-semibold text-white group-hover:text-[#8879FF] transition-colors">{group.grpName}</h3>
                       <p className="text-sm text-slate-400 mt-0.5">Updated recently</p>
                     </div>
                   </div>

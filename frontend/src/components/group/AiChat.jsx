@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Plus } from 'lucide-react';
+import { useGroupFileUpload } from '../../Hoooks/fileManager';
 
-export default function AiChat() {
+export default function AiChat({groupId, onFetchGroupData}) {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([
     { id: 1, text: 'split 800 for dinner between all 4', sender: 'user' },
@@ -10,11 +11,50 @@ export default function AiChat() {
     { id: 4, text: "Recorded. Raj's debt reduced by ₹200. Balances updated.", sender: 'bot' },
   ]);
 
+  const {upload, remove}= useGroupFileUpload()
+  const [selectedFile, setSelectedFile] = useState(null);
+  const fileInputRef = useRef(null);
+
   const handleSend = () => {
     if (!input.trim()) return;
     setMessages([...messages, { id: Date.now(), text: input, sender: 'user' }]);
     setInput('');
     // TODO: Send to LangGraph Endpoint
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      handleFileUpload(file);
+    }
+  };
+
+  const handleFileUpload = async (file) => {
+    if (!file) return;
+    const tempMsgId = Date.now();
+    setMessages(prev => [...prev, { id: tempMsgId, text: `Uploading file: ${file.name}...`, sender: 'user' }]);
+    try {
+      await upload(groupId, file);
+      setMessages(prev => prev.map(msg => msg.id === tempMsgId ? { ...msg, text: `Uploaded file: ${file.name}` } : msg));
+
+      const data = await res.json();
+      if (data.success) {
+        onFetchGroupData();  // refetch your expenses list
+      }
+
+    } catch (error) {
+      console.error("File upload failed", error);
+      setMessages(prev => prev.map(msg => 
+        msg.id === tempMsgId ? { ...msg, text: `Failed to upload: ${file.name}` } : msg
+      ));
+    } finally {
+      setSelectedFile(null);
+      // Reset input value to allow selecting the same file again if needed
+      if (fileInputRef.current) {
+        fileInputRef.current.value = null;
+      }
+    }
   };
 
   return (
@@ -52,7 +92,16 @@ export default function AiChat() {
           >
             send
           </button>
-          <button className="p-3.5 bg-[#1A1F2E] hover:bg-[#252b40] text-slate-300 border border-slate-700/50 rounded-xl font-medium transition-colors flex items-center justify-center">
+          <input 
+            type="file" 
+            ref={fileInputRef} 
+            onChange={handleFileChange} 
+            className="hidden" 
+          />
+          <button 
+            onClick={() => fileInputRef.current?.click()}
+            className="p-3.5 bg-[#1A1F2E] hover:bg-[#252b40] text-slate-300 border border-slate-700/50 rounded-xl font-medium transition-colors flex items-center justify-center"
+          >
             <Plus size={20} />
           </button>
         </div>

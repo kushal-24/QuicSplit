@@ -5,7 +5,7 @@ import ExpenseList from '../components/group/ExpenseList';
 import SettlementList from '../components/group/SettlementList';
 import AiChat from '../components/group/AiChat';
 
-export default function Group({expenses,transactions,balances,loading}) {
+export default function Group({groupId,expenses,transactions,balances,loading, onFetchGroupData}) {
   const [activeTab, setActiveTab] = useState('expenses');
 
   return (
@@ -69,7 +69,9 @@ export default function Group({expenses,transactions,balances,loading}) {
           <div className="min-h-[400px]">
              {activeTab === 'expenses' && <ExpenseList />}
              {activeTab === 'settlements' && <SettlementList transactions={transactions} />}
-             {activeTab === 'ai chat' && <AiChat />}
+             {activeTab === 'ai chat' && <AiChat 
+             groupId={groupId}
+             onFetchGroupData={onFetchGroupData} />}
           </div>
 
         </div>

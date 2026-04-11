@@ -9,11 +9,12 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import PublicRoute from "./Routes/PublicRoute.jsx"
 import PrivateRoute from "./Routes/PrivateRoute.jsx"
 import InvalidRoute from './pages/InvalidRoute.jsx'
+import Group2 from './pages/Group2.jsx'
 
 function App() {
   return (
     <>
-    <Login/>
+    <GroupPage/>
     </>
     // <AuthProvider>
     //   <BrowserRouter>
