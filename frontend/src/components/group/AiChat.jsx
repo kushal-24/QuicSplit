@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import { useGroupFileUpload } from '../../Hoooks/fileManager';
+import someTestFile from "../../../public/bill.png"
 
 export default function AiChat({groupId, onFetchGroupData}) {
   const [input, setInput] = useState('');
@@ -14,6 +15,26 @@ export default function AiChat({groupId, onFetchGroupData}) {
   const {upload, remove}= useGroupFileUpload()
   const [selectedFile, setSelectedFile] = useState(null);
   const fileInputRef = useRef(null);
+
+  //TESTING OF MY LLM//////////////////////////////////////////////////////////////////////////////////////
+  useEffect(() => {
+  const testConnection = async () => {
+    try {
+      const formData = new FormData();
+      // attach a test image
+      formData.append("bill", someTestFile);
+
+      const res = await api.post(`/group/${groupId}/uploadbill`, formData);
+      console.log("🔥 TEST RESULT:", res.data);
+    } catch (err) {
+      console.log("❌ ERROR:", err.response?.data || err.message);
+    }
+  };
+
+  testConnection();
+}, []);
+//TESTING OF MY LLM//////////////////////////////////////////////////////////////////////////////////////
+
 
   const handleSend = () => {
     if (!input.trim()) return;

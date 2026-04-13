@@ -4,6 +4,7 @@ import apiResponse from "../utils/apiResponse.js";
 import {Group} from "../models/group.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { getGroupBalances } from "./getBalances.controller.js";
+import { Expense } from "../models/expense.model.js";
 
 //ADD AND REMOVE MEMBERS
 
@@ -160,7 +161,7 @@ const getGroup = asyncHandler(async (req, res) => {
     throw new apiError(403, "Not a member of this group");
   }
 
-  const { balances, transactions } = await getGroupBalances(groupId);
+  const { balances, transactions } = await getGroupBalances(groupId, userId);
 
   const totalExpenses= await Expense.aggregate([
         {$match: {groupId: group._id}},
@@ -218,6 +219,33 @@ const getAllGroups = asyncHandler(async (req, res) => {
   );
 });
 
+const getGroupMembers = asyncHandler(async (req, res) => {
+  const { groupId } = req.params;
+  const userId = req.user._id;
+
+  const group = await Group.findById(groupId).populate("members", "fullName email");
+
+  if (!group) {
+    throw new apiError(404, "Group not found");
+  }
+
+  const isMember = group.members.some(
+    (m) => m._id.toString() === userId.toString()
+  );
+
+  if (!isMember) {
+    throw new apiError(403, "Not a member of this group");
+  }
+
+  return res.status(200).json(
+    new apiResponse(
+      group.members,
+      200,
+      "Group members fetched successfully"
+    )
+  );
+});
+
 export {
   addMember,
   removeMember,
@@ -225,5 +253,6 @@ export {
   editGroup,
   createGroup,
   getGroup,
-  getAllGroups
+  getAllGroups,
+  getGroupMembers
 }

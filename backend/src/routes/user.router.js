@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { changeUserPass, createUser, deleteUser, getAllUsers, getUserDetails, refreshAccessToken, updateFullName, userLogin, userLogout } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { getDashboardData } from "../controllers/dashboard.controller.js";
 
 const router= new Router();
 
@@ -13,5 +14,8 @@ router.route("/myprofile").get(verifyJWT, getUserDetails);
 router.route("/refreshtoken").post(refreshAccessToken);
 router.route("/deleteaccount").delete(verifyJWT, deleteUser);
 router.get("/getallusers", verifyJWT, getAllUsers);
+
+//After login: MAIN PAGE: has all groups
+router.route("/dashboard").get(verifyJWT, getDashboardData)
 
 export default router;

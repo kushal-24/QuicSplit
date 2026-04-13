@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowLeft, ArrowRight, MessageSquare, X } from 'lucide-react';
 import ExpenseCard from '../components/group/ExpenseCard';
 import AiChat from '../components/group/AiChat';
+import { useAuth } from '../Context/Auth.Context';
 
 const MOCK_EXPENSES = [
   { id: 1, title: 'Hotel booking', paidBy: 'Raj', date: '12 Jan', subtitle: '', amount: '2,000', myShare: '500', type: 'owe' },
@@ -10,8 +11,11 @@ const MOCK_EXPENSES = [
 ];
 
 
-export default function Group2({groupId,expenses,transactions,balances,loading, onFetchGroupData}) {
+export default function Group2({groupId,expenses,transactions,balances,loading, onFetchGroupData, groupData}) {
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+  const { user }= useAuth();
+  
+  const myBalance = balances[user._id.toString()] || 0;
 
   return (
     <div className="min-h-screen bg-[#0A0D14] font-sans text-slate-200 relative flex flex-col p-4 md:p-6 h-screen overflow-hidden">
@@ -33,7 +37,7 @@ export default function Group2({groupId,expenses,transactions,balances,loading, 
               <span className="text-base font-medium">groups</span>
             </button>
             <div className="w-px h-6 bg-slate-700/60 hidden sm:block"></div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Goa Trip</h1>
+            <h1 className="text-2xl font-bold text-white tracking-tight">{groupData.grpName}</h1>
             <div className="flex -space-x-2 ml-2">
               <div className="w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-300 border-[1.5px] border-[#12141a] flex items-center justify-center text-xs font-semibold z-40">RK</div>
               <div className="w-8 h-8 rounded-full bg-teal-500/20 text-teal-300 border-[1.5px] border-[#12141a] flex items-center justify-center text-xs font-semibold z-30">HS</div>
@@ -43,7 +47,7 @@ export default function Group2({groupId,expenses,transactions,balances,loading, 
           </div>
           <div className="flex items-center gap-6">
             <div className="hidden sm:flex items-center gap-2">
-              <span className="text-slate-400 font-medium text-sm">total spent</span>
+              <span className="text-slate-400 font-medium text-sm">Total spent</span>
               <span className="text-white font-bold text-lg">₹{expenses || 0}</span>
             </div>
             <button className="px-5 py-2 border border-slate-700/80 rounded-full hover:bg-white/10 text-slate-200 text-sm font-medium transition-colors">
@@ -54,7 +58,7 @@ export default function Group2({groupId,expenses,transactions,balances,loading, 
 
         {/* Dynamic Split Body */}
         <div className="flex flex-1 overflow-hidden">
-          
+ 
           {/* Left Column (Expenses & Settlements) */}
           <div className="w-full lg:w-1/2 xl:w-[55%] flex flex-col border-r border-slate-800/80">
             
@@ -79,7 +83,7 @@ export default function Group2({groupId,expenses,transactions,balances,loading, 
                 {/* Net Balance Highlight */}
                 <div className="mt-6 p-5 bg-[#1A1F2E]/40 border border-slate-800/80 rounded-2xl">
                   <p className="text-sm text-slate-400 font-medium mb-1">your net balance</p>
-                  <p className="text-3xl font-bold text-red-400 tracking-tight">- ₹50 owed</p>
+                  <p className="text-3xl font-bold text-red-400 tracking-tight">{myBalance >=0 ? `+ ₹${myBalance}` : `- ₹${Math.abs(myBalance)} owed`}</p>
                 </div>
               </div>
             </div>

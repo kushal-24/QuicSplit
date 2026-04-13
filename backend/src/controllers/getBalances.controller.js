@@ -7,10 +7,7 @@ import apiError from "../utils/apiError.js";
 import apiResponse from "../utils/apiResponse.js";
 
 
-const getGroupBalances = asyncHandler(async (req, res) => {
-  const { groupId } = req.params;
-  const userId = req.user._id;
-
+const getGroupBalances = async (groupId, userId) => {
 
   const group = await Group.findById(groupId);
   if (!group) {
@@ -112,16 +109,10 @@ const getGroupBalances = asyncHandler(async (req, res) => {
   );
 
   // Response
-  return res.status(200).json(
-    new apiResponse(
-      {
+  return {
         balances,
         transactions: populatedTransactions
-      },
-      200,
-      "Group balances fetched successfully"
-    )
-  );
-});
+      }
+};
 
 export { getGroupBalances };

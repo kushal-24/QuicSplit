@@ -5,7 +5,7 @@ import ExpenseList from '../components/group/ExpenseList';
 import SettlementList from '../components/group/SettlementList';
 import AiChat from '../components/group/AiChat';
 
-export default function Group({groupId,expenses,transactions,balances,loading, onFetchGroupData}) {
+export default function Group({groupId,expenses,transactions,balances,loading, onFetchGroupData, groupData}) {
   const [activeTab, setActiveTab] = useState('expenses');
 
   return (

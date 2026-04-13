@@ -14,59 +14,58 @@ import Group2 from './pages/Group2.jsx'
 function App() {
   return (
     <>
-    <GroupPage/>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route
+              path='/'
+              element={
+                <PublicRoute>
+                  <LandingPage />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path='/auth'
+              element={
+                <PublicRoute>
+                  <Login />
+                </PublicRoute>
+              }
+            />
+
+            {/* Private routes */}
+            <Route
+              path='/dashboard'
+              element={
+                <PrivateRoute>
+                  <DashBoard />
+                </PrivateRoute>
+              }
+            />
+            {/* <Route
+              path="/groups/new"
+              element={
+                <PrivateRoute>
+                  <CreateBoard />
+                </PrivateRoute>
+              }
+            /> */}
+            <Route
+              path="/groups/:groupId"
+              element={
+                <PrivateRoute>
+                  <GroupPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="*"
+              element={<InvalidRoute />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </>
-    // <AuthProvider>
-    //   <BrowserRouter>
-    //   <Routes>
-    //     <Route
-    //     path='/'
-    //     element={
-    //         <PublicRoute>
-    //           <LandingPage/>
-    //         </PublicRoute>
-    //         }
-    //     />
-    //     <Route
-    //     path='/auth'
-    //     element={
-    //       <PublicRoute>
-    //         <Login/>
-    //       </PublicRoute>
-    //     }
-    //     />
-        
-    //     {/* Private routes */}
-    //     <Route
-    //     path='/groups'
-    //     element={
-    //       <PrivateRoute>
-    //         <DashBoard/>
-    //       </PrivateRoute>
-    //     }
-    //     />
-    //     <Route
-    //         path="/groups/new"
-    //         element={
-    //           <PrivateRoute>
-    //             <CreateBoard/>
-    //           </PrivateRoute>
-    //         }
-    //       />
-    //       <Route
-    //         path="/groups/:groupId"
-    //         element={
-    //           <PrivateRoute>
-    //             <GroupPage />
-    //           </PrivateRoute>
-    //         }
-    //       />
-    //       <Route 
-    //       path="*" 
-    //       element={<InvalidRoute />} />
-    //   </Routes>
-    //   </BrowserRouter>
-    // </AuthProvider>
   )
 }
 

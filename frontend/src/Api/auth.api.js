@@ -28,3 +28,7 @@ export const getAllUsers=()=>{
   return api.get("/user/getallusers");
 }
 
+export const getDashboardData=async()=>{
+    return api.get(`user/dashboard`);
+}
+

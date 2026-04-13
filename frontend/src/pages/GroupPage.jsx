@@ -1,36 +1,41 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from  'react';
 import Group from './Group';
 import Group2 from './Group2';
 import { getGroup } from '../Api/group.api';
+import { useParams } from 'react-router-dom';
 
 export default function GroupPage() {
   const [isDesktop, setIsDesktop] = useState(typeof window !== 'undefined' ? window.innerWidth >= 768 : true);
+  const [groupData, setGroupData] = useState({});
   const [expenses, setExpenses] = useState([])
-  const [transactions, setTransactions] = useState([])
+  const [transactions, setTransactions] = useState([])                                                                          
   const [balances, setBalances] = useState({})
   const [loading, setLoading] = useState(true)
 
-  const { groupId } = useParams()
+  const { groupId } = useParams()  
 
   const fetchGroupData = async () => {
-        try {
-          const groupData = await getGroup(groupId);
-          setBalances(groupData.data.balances);
-          setTransactions(groupData.data.transactions);
-          setExpenses(groupData.data.totalSpent)
-        } catch (error) {
-          console.log("errorrr in fetching group , i.e", error);
-        }
-        finally {
-          setLoading(false);
-        }
+    try {
+      const groupData = await getGroup(groupId);
+      console.log("group data",groupData.data.data.group)
+      setGroupData(groupData.data.data.group);
+      setBalances(groupData.data.data.balances);
+      setTransactions(groupData.data.data.transactions);
+      setExpenses(groupData.data.data.totalSpent)
     }
+    catch (error) {
+      console.log("errorrr in fetching group , i.e", error);
+    }
+    finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
     const handleResize = async () => {
       setIsDesktop(window.innerWidth >= 768);
     };
-    
+
     // Set initial size
     fetchGroupData();
     handleResize();
@@ -45,11 +50,13 @@ export default function GroupPage() {
     expenses={expenses}
     transactions={transactions}
     balances={balances}
+    groupData={groupData}
     loading={loading}
   /> :
     <Group
       onFetchGroupData={fetchGroupData}
       groupId={groupId}
+      groupData={groupData}
       expenses={expenses}
       transactions={transactions}
       balances={balances}

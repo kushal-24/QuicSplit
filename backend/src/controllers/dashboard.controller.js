@@ -1,20 +1,18 @@
-import Group from "../../../frontend/src/pages/Group"
-import { Expense } from "../models/expense.model"
-import asyncHandler from "../utils/asyncHandler"
-import { getGroupBalances } from "./getBalances.controller"
+import { Group } from "../models/group.model.js"
+import { Expense } from "../models/expense.model.js"
+import asyncHandler from "../utils/asyncHandler.js"
+import { getGroupBalances } from "./getBalances.controller.js"
+import apiResponse from "../utils/apiResponse.js"
 
 
-const getDashboardData = asyncHandler(async (req, res) => {
+const getDashboardData = asyncHandler(async (req, res, next) => {
   const userId = req.user._id
 
-  // find all groups user is part of
   const groups = await Group.find({ members: userId })
 
   const groupsWithBalance = await Promise.all(groups.map(async (group) => {
-    // reuse your extracted function
-    const { balances } = await getGroupBalances(group._id)
+    const { balances } = await getGroupBalances(group._id, userId)
 
-    // only extract THIS user's balance from the result
     const myBalance = balances[userId.toString()] || 0
 
     const totalExpenses= await Expense.aggregate([
@@ -36,4 +34,4 @@ const getDashboardData = asyncHandler(async (req, res) => {
   return res.status(200).json(new apiResponse(groupsWithBalance, 200, "Dashboard fetched"))
 })
 
-export{getDashboardData}
+export {getDashboardData}

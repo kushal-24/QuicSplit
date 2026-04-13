@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, Lock, User, ArrowRight, Sun, Moon } from 'lucide-react';
 import { signupApi } from '../Api/auth.api';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../Context/Auth.Context';
 
 export default function Login() {
-  const [isLogin, setIsLogin] = useState(true);
+  const location = useLocation();
+  const [isLogin, setIsLogin] = useState(location.state?.isLogin ?? true);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,7 +16,7 @@ export default function Login() {
   const [successMsg, setSuccessMsg] = useState("");
 
   const navigate = useNavigate();
-  const {login}=useAuth()
+  const {login}= useAuth()
 
   const onSubmitHandler = async (e) => {
     e.preventDefault()
@@ -28,7 +29,8 @@ export default function Login() {
         setSuccessMsg("logged in successfully");
         console.log(successMsg);
         
-      } catch (error) {
+      } 
+      catch (error) {
         const status = error?.response?.status;
         const message = error?.response?.data?.message;
 
@@ -46,12 +48,12 @@ export default function Login() {
         setLoading(false);
       }
     }
-    else{
+    else {
       try {
-        const response = await signupApi({ email, password, fullName });
-        setIsLogin(true);
-        setSuccessMsg("Account created successfully");  
+        const response = await signupApi({email, password, fullName});
+        setSuccessMsg("Account created successfully");
         console.log(successMsg);
+        setIsLogin(true);
       } catch (error) {
         const status = error?.response?.status;
         const message = error?.response?.data?.message;
@@ -90,8 +92,7 @@ export default function Login() {
         <button
           onClick={toggleTheme}
           className="p-3 bg-white/50 dark:bg-[#1A1F2E]/50 backdrop-blur-md border border-slate-200 dark:border-slate-800 rounded-full shadow-sm hover:scale-105 active:scale-95 transition-all text-slate-800 dark:text-white cursor-pointer"
-          aria-label="Toggle theme"
-        >
+          aria-label="Toggle theme">
           {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
         </button>
       </div>
@@ -121,6 +122,7 @@ export default function Login() {
 
         {/* Form */}
         <form className="space-y-4 relative z-10" onSubmit={onSubmitHandler}>
+          {/* SIGNUP COMPONENT */}
           {!isLogin && (
             <div className="space-y-1 animate-in fade-in slide-in-from-top-2 duration-300">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Full Name</label>
@@ -183,8 +185,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}  
-            className="w-full py-3 px-4 bg-[#6B5AED] hover:bg-[#5a4add] dark:bg-[#6B5AED] dark:hover:bg-[#7a6cf0] text-white rounded-xl font-semibold shadow-[0_4px_12px_rgba(107,90,237,0.3)] hover:shadow-[0_6px_16px_rgba(107,90,237,0.4)] transition-all flex items-center justify-center gap-2 mt-1 cursor-pointer"
-          >
+            className="w-full py-3 px-4 bg-[#6B5AED] hover:bg-[#5a4add] dark:bg-[#6B5AED] dark:hover:bg-[#7a6cf0] text-white rounded-xl font-semibold shadow-[0_4px_12px_rgba(107,90,237,0.3)] hover:shadow-[0_6px_16px_rgba(107,90,237,0.4)] transition-all flex items-center justify-center gap-2 mt-1 cursor-pointer">
             {isLogin ? 'Sign In' : 'Create Account'}
             <ArrowRight className="w-5 h-5" />
           </button>
@@ -199,8 +200,7 @@ export default function Login() {
         {/* Google Button */}
         <button
           type="button"
-          className="w-full py-3 px-4 bg-white dark:bg-[#1A1F2E] hover:bg-slate-50 dark:hover:bg-[#22283A] border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-medium transition-all flex items-center justify-center gap-2 shadow-sm"
-        >
+          className="w-full py-3 px-4 bg-white dark:bg-[#1A1F2E] hover:bg-slate-50 dark:hover:bg-[#22283A] border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-medium transition-all flex items-center justify-center gap-2 shadow-sm">
           <svg className="w-5 h-5 bg-white rounded-full p-0.5" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />

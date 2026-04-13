@@ -40,7 +40,7 @@ const InvalidRoute = () => {
 
         {/* CTA */}
         <button
-          onClick={() => navigate("/login")}
+          onClick={() => navigate("/dashboard")}
           className="inline-flex cursor-pointer items-center justify-center gap-2
             px-6 py-3 rounded-xl font-medium text-white
             bg-linear-to-r from-cyan-500 to-violet-500

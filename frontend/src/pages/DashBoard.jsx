@@ -1,56 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Combine, Settings, LogOut, Plus, TrendingUp, Receipt, ChevronDown,Users} from 'lucide-react';
-import { getDashboardData } from '../Api/group.api';
+import { getDashboardData } from '../Api/auth.api'; 
 import { useNavigate } from 'react-router-dom';
 
-const MOCK_GROUPS = [
-  {
-    _id: 1,
-    grpName: "Goa Trip",
-    emoji: "🏖️",
-    totalSpent: "₹45,000",
-    myBalance: -2500, // You owe
-    members: [
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop",
-      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop",
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop"
-    ]
-  },
-  {
-    _id: 2,
-    grpName: "Apartment Rent",
-    emoji: "🏢",
-    totalExpenses: "₹30,000",
-    myBalance: 5000, // Owed to you
-    members: [
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
-      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop"
-    ]
-  },
-  {
-    _id: 3,
-    grpName: "Friday Dinner",
-    emoji: "🍔",
-    totalExpenses: "₹4,500",
-    myBalance: 0, // Settled
-    members: [
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
-      "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=100&h=100&fit=crop",
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
-      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop"
-    ]
-  }
-];
+
 
 export default function DashBoard() {
   const navigate= useNavigate();
+  
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [groups, setGroups] = useState(MOCK_GROUPS); 
+  const [groups, setGroups] = useState([]); 
+  
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        const response = await getDashboardData();
+        const response = await getDashboardData();        
         setGroups(response.data.data);
+        console.log(response.data.data)
+        
+        
       } catch (error) {
         console.error('Error fetching groups:', error);
       }
@@ -191,9 +159,9 @@ export default function DashBoard() {
                         alt="Member avatar"
                       />
                     ))} */}
-                    {group.members.length > 3 && (
+                    {group.memberCount > 3 && (
                       <div className="w-9 h-9 rounded-full border-2 border-[#1A1F2E] bg-slate-800 flex items-center justify-center text-xs font-medium text-slate-300 z-10">
-                        +{group.members.length - 3}
+                        +{group.memberCount - 3}
                       </div>
                     )}
                   </div>
@@ -221,8 +189,8 @@ export default function DashBoard() {
             <p className="text-slate-400 max-w-md mx-auto mb-8 leading-relaxed">
               Create a group to start splitting bills securely, or ask a friend to add you to their existing group.
             </p>
-            
-            <button 
+             
+              <button //////////////////////////////////////NEW GROUP MODAL, TO BE MADE///////////////////////////////////////////////////////////////////////
               onClick={() => {}} 
               className="bg-[#6B5AED] hover:bg-[#5a4add] text-white px-8 py-3.5 rounded-xl flex items-center justify-center gap-2 font-semibold transition-all shadow-[0_4px_12px_rgba(107,90,237,0.3)] hover:shadow-[0_6px_16px_rgba(107,90,237,0.4)] active:scale-95">
               <Plus size={22} />
