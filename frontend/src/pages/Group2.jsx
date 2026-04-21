@@ -4,14 +4,9 @@ import ExpenseCard from '../components/group/ExpenseCard';
 import AiChat from '../components/group/AiChat';
 import { useAuth } from '../Context/Auth.Context';
 
-const MOCK_EXPENSES = [
-  { id: 1, title: 'Hotel booking', paidBy: 'Raj', date: '12 Jan', subtitle: '', amount: '2,000', myShare: '500', type: 'owe' },
-  { id: 2, title: 'Dinner at Thalassa', paidBy: 'Harsh', date: '13 Jan', subtitle: '', amount: '1,200', myShare: '300', type: 'owe' },
-  { id: 3, title: 'Scooter rentals', paidBy: 'You', date: '14 Jan', subtitle: '', amount: '1,000', myShare: '750', type: 'get' },
-];
 
+export default function Group2({groupId, expenses, transactions, balances, loading, onFetchGroupData, groupData}) {
 
-export default function Group2({groupId,expenses,transactions,balances,loading, onFetchGroupData, groupData}) {
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const { user }= useAuth();
   
@@ -76,9 +71,9 @@ export default function Group2({groupId,expenses,transactions,balances,loading, 
                 </div>
               </div>
               <div className="flex-1 overflow-y-auto px-6 pb-6 custom-scrollbar">
-                {MOCK_EXPENSES.map(exp => (
-                  <ExpenseCard key={exp.id} {...exp} />
-                ))}
+                {expenses ? expenses.map(exp => (
+                  <ExpenseCard key={exp.id} {...exp} groupData={groupData} />
+                )) : <p>No expenses found</p>}
                 
                 {/* Net Balance Highlight */}
                 <div className="mt-6 p-5 bg-[#1A1F2E]/40 border border-slate-800/80 rounded-2xl">
@@ -150,13 +145,12 @@ export default function Group2({groupId,expenses,transactions,balances,loading, 
                </div>
                <button 
                  onClick={() => setIsAiModalOpen(false)} 
-                 className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800/50 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
-               >
+                 className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800/50 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors">
                  <X size={18}/>
                </button>
              </div>
              <div className="flex-1 overflow-hidden p-4 bg-[#0A0D14]/50">
-               <AiChat />
+               <AiChat groupId={groupId} />
              </div>
           </div>
         </div>

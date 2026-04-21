@@ -2,9 +2,7 @@ import {Expense} from "../models/expense.model.js";
 import {Settlement} from "../models/settlement.model.js";
 import {Group} from "../models/group.model.js";
 import {User} from "../models/user.model.js";
-import asyncHandler from "../utils/asyncHandler.js";
 import apiError from "../utils/apiError.js";
-import apiResponse from "../utils/apiResponse.js";
 
 
 const getGroupBalances = async (groupId, userId) => {
@@ -23,7 +21,10 @@ const getGroupBalances = async (groupId, userId) => {
   }
 
   // Fetch data, expense has who paid the bill and was shared by whom
-  const expenses = await Expense.find({ group: groupId });
+  const expenses = await Expense.find({ group: groupId })
+  .populate("expenseName")
+  .populate("paidBy", "fullName")
+  
   const settlements = await Settlement.find({ group: groupId });
 
   //. Initialize balances
@@ -111,7 +112,8 @@ const getGroupBalances = async (groupId, userId) => {
   // Response
   return {
         balances,
-        transactions: populatedTransactions
+        transactions: populatedTransactions,
+        expenses
       }
 };
 

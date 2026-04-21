@@ -8,7 +8,8 @@ import apiError from "../utils/apiError.js"
 import { getGroupBalances } from "./getBalances.controller.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { llm } from "../ai/llm.js";
-import { HumanMessage } from "@langchain/core/messages";
+import { AIMessage, HumanMessage } from "@langchain/core/messages";
+import { getSystemPrompt } from "../ai/prompt.js";
 
 const uploadAndProcessBill = asyncHandler(async (req, res) => {
     const { groupId } = req.params;
@@ -29,7 +30,7 @@ const uploadAndProcessBill = asyncHandler(async (req, res) => {
         throw new apiError(403, "You are not a member of this group");
     }
 
-    const filePath = req.file.path;
+    const filePath = req.file?.path;
 
     //Upload to Cloudinary
     const uploadedFile = await uploadOnCloudinary(filePath);
@@ -37,9 +38,6 @@ const uploadAndProcessBill = asyncHandler(async (req, res) => {
     if (!uploadedFile) {
         throw new apiError(500, "File upload failed");
     }
-
-
-
 
     //LLM comes into the playy
     const imageResponse = await fetch(uploadedFile.secure_url);
@@ -60,7 +58,7 @@ const uploadAndProcessBill = asyncHandler(async (req, res) => {
                     text: `You are a receipt scanner. Extract details from this receipt image.
                 Return ONLY a valid JSON object, no markdown, no explanation:
                 {
-                    "title": "merchant or bill name",
+                    "expenseName": "merchant or bill name",
                     "amount": 999.00,
                     "description": "short description of what was purchased",
                     "ocrText": "full raw text you can read from the receipt"
@@ -78,9 +76,10 @@ const uploadAndProcessBill = asyncHandler(async (req, res) => {
     } catch (err) {
         throw new apiError(500, "Gemini returned invalid JSON: " + raw);
     }
-    extractedData = RETURN;
 
-    const { title, amount, description, ocrText } = extractedData;
+    const { expenseName, amount, description, ocrText } = extractedData;
+
+    const finalAmount = parseFloat(amount);
 
 
     //create file MODEL ka ek FILE
@@ -90,8 +89,8 @@ const uploadAndProcessBill = asyncHandler(async (req, res) => {
         uploadedBy: userId,
         group: groupId,
         ocrText: ocrText,
-        extractedAmount: amount,
-        extractedTitle: title
+        extractedAmount: finalAmount,
+        extractedTitle: expenseName
     });
 
     //Split among members
@@ -105,6 +104,7 @@ const uploadAndProcessBill = asyncHandler(async (req, res) => {
 
     //Create Expense MODEL ka ek EXPENSE
     const expense = await Expense.create({
+        expenseName: expenseName,
         group: groupId,
         paidBy: userId,
         amount: amount,
@@ -124,6 +124,37 @@ const uploadAndProcessBill = asyncHandler(async (req, res) => {
         )
     );
 });
+
+const chatWithAI = asyncHandler(async (req, res) => {
+  const { groupId } = req.params;
+  const { messages } = req.body;  // full history from frontend
+  const userId = req.user._id;
+
+  // get group members for system prompt
+  const group = await Group.findById(groupId).populate("members", "fullName");
+  if (!group) throw new apiError(404, "Group not found");
+
+  const memberNames = group.members.map(m => m.fullName);
+
+  // format history for Gemini
+  const formattedMessages = messages.map(msg =>
+    msg.role === "user"
+      ? new HumanMessage(msg.content)
+      : new AIMessage(msg.content)
+  );
+
+  const result = await llm.invoke([
+    getSystemPrompt(groupId, memberNames),  // your prompt.js
+    ...formattedMessages  // full chat history
+  ]);
+
+  res.status(200).json(new apiResponse(
+    { reply: result.content },
+    200,
+    "AI response"
+  ));
+});
+
 
 const createExpense = asyncHandler(async (req, res) => {
     const { groupId } = req.params;
@@ -221,5 +252,6 @@ export {
     createExpense,
     deleteExpense,
     createSettlement,
-    getExpenses
+    getExpenses,
+    chatWithAI
 }

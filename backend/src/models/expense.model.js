@@ -61,11 +61,10 @@ const expenseSchema = new mongoose.Schema(
 expenseSchema.pre("save", function (next) {
   const total = this.participants.reduce((sum, p) => sum + p.share, 0);
 
-  if (total !== this.amount) {
-    return next(new Error("Total shares must equal expense amount"));
+  if (Math.abs(total - this.amount) > 0.01) {  // ✅ tolerance of 1 paisa
+    throw new Error("Total shares must equal expense amount");
   }
 
-  next();
 });
 
 export const Expense = mongoose.model('Expense', expenseSchema);

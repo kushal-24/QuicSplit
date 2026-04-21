@@ -161,7 +161,7 @@ const getGroup = asyncHandler(async (req, res) => {
     throw new apiError(403, "Not a member of this group");
   }
 
-  const { balances, transactions } = await getGroupBalances(groupId, userId);
+  const { balances, transactions, expenses } = await getGroupBalances(groupId, userId);
 
   const totalExpenses= await Expense.aggregate([
         {$match: {groupId: group._id}},
@@ -181,7 +181,8 @@ const getGroup = asyncHandler(async (req, res) => {
         },
         balances,
         transactions,
-        totalSpent
+        totalSpent,
+        expenses
       },
       200,
       "Group fetched successfully"

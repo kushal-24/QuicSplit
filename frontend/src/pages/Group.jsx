@@ -67,7 +67,7 @@ export default function Group({groupId,expenses,transactions,balances,loading, o
 
           {/* Tab Content Rendering */}
           <div className="min-h-[400px]">
-             {activeTab === 'expenses' && <ExpenseList />}
+             {activeTab === 'expenses' && <ExpenseList expenses={expenses} />}
              {activeTab === 'settlements' && <SettlementList transactions={transactions} />}
              {activeTab === 'ai chat' && <AiChat 
              groupId={groupId}

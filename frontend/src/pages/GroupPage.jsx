@@ -17,7 +17,6 @@ export default function GroupPage() {
   const fetchGroupData = async () => {
     try {
       const groupData = await getGroup(groupId);
-      console.log("group data",groupData.data.data.group)
       setGroupData(groupData.data.data.group);
       setBalances(groupData.data.data.balances);
       setTransactions(groupData.data.data.transactions);

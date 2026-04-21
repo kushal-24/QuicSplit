@@ -1,4 +1,5 @@
 import api from "../Api/axios";
+import { uploadBill } from "../Api/group.api";
 
 export const useGroupFileUpload=()=>{
   
@@ -6,7 +7,7 @@ export const useGroupFileUpload=()=>{
     const fd=  new FormData();
     fd.append("file", file);
 
-    const res= await api.post(`/group/${groupId}/uploadbill`, fd);
+    const res= await uploadBill(groupId, fd);
 
     return res.data;
   }

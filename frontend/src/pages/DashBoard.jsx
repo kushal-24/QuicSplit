@@ -3,8 +3,6 @@ import { Combine, Settings, LogOut, Plus, TrendingUp, Receipt, ChevronDown,Users
 import { getDashboardData } from '../Api/auth.api'; 
 import { useNavigate } from 'react-router-dom';
 
-
-
 export default function DashBoard() {
   const navigate= useNavigate();
   
