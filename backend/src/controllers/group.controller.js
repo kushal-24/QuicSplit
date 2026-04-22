@@ -164,10 +164,11 @@ const getGroup = asyncHandler(async (req, res) => {
   const { balances, transactions, expenses } = await getGroupBalances(groupId, userId);
 
   const totalExpenses= await Expense.aggregate([
-        {$match: {groupId: group._id}},
+        {$match: {group: group._id}},
         {$group: {_id: null, total: {$sum: "$amount"}}}
       ])
       const totalSpent = totalExpenses[0]?.total || 0
+      console.log("TOTAL SPENT", totalSpent);
 
   return res.status(200).json(
     new apiResponse(

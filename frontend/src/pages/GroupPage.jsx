@@ -8,6 +8,7 @@ export default function GroupPage() {
   const [isDesktop, setIsDesktop] = useState(typeof window !== 'undefined' ? window.innerWidth >= 768 : true);
   const [groupData, setGroupData] = useState({});
   const [expenses, setExpenses] = useState([])
+  const [totalSpent, setTotalSpent] = useState([])
   const [transactions, setTransactions] = useState([])                                                                          
   const [balances, setBalances] = useState({})
   const [loading, setLoading] = useState(true)
@@ -17,10 +18,13 @@ export default function GroupPage() {
   const fetchGroupData = async () => {
     try {
       const groupData = await getGroup(groupId);
+      console.log("GROUP ALL DATA", groupData.data.data);
+      
       setGroupData(groupData.data.data.group);
       setBalances(groupData.data.data.balances);
       setTransactions(groupData.data.data.transactions);
-      setExpenses(groupData.data.data.totalSpent)
+      setTotalSpent(groupData.data.data.totalSpent)
+      setExpenses(groupData.data.data.expenses)
     }
     catch (error) {
       console.log("errorrr in fetching group , i.e", error);
@@ -47,6 +51,7 @@ export default function GroupPage() {
     onFetchGroupData={fetchGroupData}
     groupId={groupId}
     expenses={expenses}
+    totalSpent={totalSpent}
     transactions={transactions}
     balances={balances}
     groupData={groupData}
@@ -57,6 +62,7 @@ export default function GroupPage() {
       groupId={groupId}
       groupData={groupData}
       expenses={expenses}
+      totalSpent={totalSpent}
       transactions={transactions}
       balances={balances}
       loading={loading}

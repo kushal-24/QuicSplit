@@ -36,11 +36,14 @@ const getGroupBalances = async (groupId, userId) => {
 
   //  Process expenses
   expenses.forEach(exp => {
-    const paidBy = exp.paidBy.toString();
+    const paidBy = exp.paidBy._id.toString();
+    console.log("PAID BY STATUS", paidBy);
+    
 
     exp.participants.forEach(p => {
-      const user = p.user.toString();
+      const user = p.user._id.toString();
       const share = p.share;
+
 
       if (user === paidBy) {
         balances[user] += (exp.amount - share); //usne hi pay kia hai toh uska '+' me rakho

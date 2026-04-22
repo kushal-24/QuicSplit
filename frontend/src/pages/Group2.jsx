@@ -3,14 +3,31 @@ import { ArrowLeft, ArrowRight, MessageSquare, X } from 'lucide-react';
 import ExpenseCard from '../components/group/ExpenseCard';
 import AiChat from '../components/group/AiChat';
 import { useAuth } from '../Context/Auth.Context';
+import { createSettlement } from '../Api/group.api';
 
 
-export default function Group2({groupId, expenses, transactions, balances, loading, onFetchGroupData, groupData}) {
+export default function Group2({groupId, expenses, totalSpent, transactions, balances, loading, onFetchGroupData, groupData}) {
 
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const { user }= useAuth();
   
   const myBalance = balances[user._id.toString()] || 0;
+
+  const markSettledHandler= async(settlement)=>{
+    //if user is neither from nor to, then skip
+    if(settlement.from._id !== user._id && settlement.to._id !== user._id){
+      return;
+    }
+    const newSettlement={
+      group: groupId,
+      from: settlement.from._id,
+      to: settlement.to._id,
+      amount: settlement.amount,
+    }
+    const res = await createSettlement(groupId, newSettlement);
+    await onFetchGroupData();
+    console.log("RES", res);
+  }
 
   return (
     <div className="min-h-screen bg-[#0A0D14] font-sans text-slate-200 relative flex flex-col p-4 md:p-6 h-screen overflow-hidden">
@@ -43,7 +60,7 @@ export default function Group2({groupId, expenses, transactions, balances, loadi
           <div className="flex items-center gap-6">
             <div className="hidden sm:flex items-center gap-2">
               <span className="text-slate-400 font-medium text-sm">Total spent</span>
-              <span className="text-white font-bold text-lg">₹{expenses || 0}</span>
+              <span className="text-white font-bold text-lg">₹{totalSpent || 0}</span>
             </div>
             <button className="px-5 py-2 border border-slate-700/80 rounded-full hover:bg-white/10 text-slate-200 text-sm font-medium transition-colors">
               + invite
@@ -98,7 +115,9 @@ export default function Group2({groupId, expenses, transactions, balances, loadi
                         {settlement.to?.name} 
                         <span className="ml-2 font-bold">₹{settlement.amount}</span>
                       </p>
-                      <button className="px-3 py-1.5 border border-[#304B3B] text-[#4ADE80] bg-[#4ADE80]/10 rounded-full text-xs font-semibold hover:bg-[#4ADE80]/20 transition-colors">
+                      <button 
+                      onClick={()=>markSettledHandler(settlement)}
+                      className="px-3 py-1.5 border border-[#304B3B] text-[#4ADE80] bg-[#4ADE80]/10 rounded-full text-xs font-semibold hover:bg-[#4ADE80]/20 transition-colors">
                         mark settled
                       </button>
                     </div>

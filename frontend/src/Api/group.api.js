@@ -15,3 +15,7 @@ export const uploadBill= async(groupId,formData)=>{
 export const chatWithAi= async (groupId, messages)=>{    
     return api.post(`/group/${groupId}/sendchat`, {messages});
 }
+
+export const createSettlement= async(groupId, settlement)=>{
+    return api.post(`/group/${groupId}/createsettlement`, settlement);
+}

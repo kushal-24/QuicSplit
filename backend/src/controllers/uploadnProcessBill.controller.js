@@ -215,8 +215,9 @@ const deleteExpense = asyncHandler(async (req, res) => {
 });
 
 const createSettlement = asyncHandler(async (req, res) => {
-    const { groupId } = req.parms
+    const { groupId } = req.params
     const { from, to, amount, note } = req.body;
+    const userId= req.user?._id
 
     const group = await Group.findById(groupId);
     if (!group) throw new apiError(404, "Group not found");
@@ -229,7 +230,7 @@ const createSettlement = asyncHandler(async (req, res) => {
         note
     });
 
-    const result = await calculateGroupBalances(groupId);
+    const result = await getGroupBalances(groupId, userId);
 
     return res.status(201).json(new apiResponse({
         balances: result.balances,

@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Plus, X, FileText } from 'lucide-react';
 import { useGroupFileUpload } from '../../Hoooks/fileManager';
 import { chatWithAi } from '../../Api/group.api';
-
+import ReactMarkdown from "react-markdown"
 
 export default function AiChat({ groupId, onFetchGroupData }) {
   const [messages, setMessages] = useState([
@@ -14,7 +14,6 @@ export default function AiChat({ groupId, onFetchGroupData }) {
 
   const { upload, remove } = useGroupFileUpload()
   const fileInputRef = useRef(null);
-  console.log("GROUPID", groupId);
   
 
   const [input, setInput] = useState('');
@@ -79,7 +78,6 @@ export default function AiChat({ groupId, onFetchGroupData }) {
             content: currentInput 
           });
 
-          console.log("🚨 FINAL groupId before API:", groupId);
         const res = await chatWithAi(groupId, historyForApi);
         console.log("🔥 AI CHAT RESULT:", res.data);
 
@@ -140,7 +138,7 @@ export default function AiChat({ groupId, onFetchGroupData }) {
                   <span className="text-xs opacity-80">Document attached</span>
                 </div>
               )}
-              <span>{msg.text}</span>
+              <span><ReactMarkdown>{msg.text}</ReactMarkdown></span>
             </div>
           </div>
         ))}
@@ -210,8 +208,7 @@ export default function AiChat({ groupId, onFetchGroupData }) {
           <button
             onClick={handleSend}
             disabled={(!input.trim() && !selectedFile) || isProcessing}
-            className="px-6 py-3.5 bg-[#6B5AED]/10 hover:bg-[#6B5AED]/20 text-[#6B5AED] font-semibold border border-[#6B5AED]/30 rounded-xl text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#6B5AED]/10 flex items-center gap-2"
-          >
+            className="px-6 py-3.5 bg-[#6B5AED]/10 hover:bg-[#6B5AED]/20 text-[#6B5AED] font-semibold border border-[#6B5AED]/30 rounded-xl text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#6B5AED]/10 flex items-center gap-2">
             {isProcessing ? 'sending...' : 'send'}
           </button>
         </div>

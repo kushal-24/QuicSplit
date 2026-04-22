@@ -46,10 +46,10 @@ const settlementSchema = new mongoose.Schema(
 //preventing settlement with myself
 settlementSchema.pre("save", function (next) {
   if (this.from.toString() === this.to.toString()) {
-    return next(new Error("Cannot settle with yourself"));
+    throw new Error("Cannot settle with yourself");
   }
 
-  next();
+  
 });
 
 export const Settlement = mongoose.model("Settlement", settlementSchema);
