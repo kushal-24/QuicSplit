@@ -8,7 +8,7 @@ const router= new Router()
 
 router.route("/:groupId/uploadbill").post(verifyJWT, upload.single("file"), uploadAndProcessBill);
 router.route("/:groupId/sendchat").post(verifyJWT, chatWithAI);
-router.route("/creategroup").post(verifyJWT, createGroup);
+router.route("/creategroup").post(verifyJWT, upload.single("thumbnail"), createGroup);
 router.route("/:groupId/viewgroup").get(verifyJWT, getGroup);
 router.route("/:groupId/updategroup").patch(verifyJWT, editGroup);
 router.route("/:groupId/deletegroup").delete(verifyJWT, deleteGroup);

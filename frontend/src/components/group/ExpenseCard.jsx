@@ -5,7 +5,7 @@ export default function ExpenseCard({groupData, expenseName, createdAt, descript
   const formattedDate = createdAt 
     ? new Date(createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short' })
     : 'Unknown date';
-
+    
   // Attempt to extract string representation of populated objects
   const groupName = groupData?.grpName || 'Unknown Group';
   const payerName = paidBy?.fullName || 'N.A';

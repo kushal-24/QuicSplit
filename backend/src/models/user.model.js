@@ -25,6 +25,10 @@ const userSchema = new Schema({
     googleId: {
         type: String,
     },
+    avatar: {
+        type: String, // Cloudinary URL
+        default: "https://i.pinimg.com/474x/40/d6/55/40d655b7022ce45320f3916c10a37e19.jpg",
+    },
 }, { timestamps: true })
 
 userSchema.pre("save", async function () {

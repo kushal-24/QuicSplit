@@ -19,3 +19,23 @@ export const chatWithAi= async (groupId, messages)=>{
 export const createSettlement= async(groupId, settlement)=>{
     return api.post(`/group/${groupId}/createsettlement`, settlement);
 }
+
+export const createGroupApi = (formData) => {
+  return api.post("/group/creategroup", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+export const updateGroupApi = (groupId, formData) => {
+  return api.patch(`/group/${groupId}/updategroup`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+export const addMemberApi = (groupId, memberId) => {
+  return api.post(`/group/${groupId}/addmember`, { a: memberId });
+};

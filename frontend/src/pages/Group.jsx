@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Settings as SettingsIcon } from 'lucide-react';
+import GroupSettingsModal from '../components/group/GroupSettingsModal';
 import StatCards from '../components/group/StatCards';
 import ExpenseList from '../components/group/ExpenseList';
 import SettlementList from '../components/group/SettlementList';
@@ -7,6 +8,7 @@ import AiChat from '../components/group/AiChat';
 
 export default function Group({groupId,expenses,transactions,balances,loading, onFetchGroupData, groupData}) {
   const [activeTab, setActiveTab] = useState('expenses');
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-[#0A0D14] font-sans text-slate-200 relative">
@@ -41,9 +43,17 @@ export default function Group({groupId,expenses,transactions,balances,loading, o
               </div>
             </div>
 
-            <button className="w-full sm:w-auto px-5 py-2.5 border border-slate-700/80 rounded-full hover:bg-white/10 text-slate-200 text-sm font-medium transition-colors">
-              + invite
-            </button>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <button className="flex-1 sm:flex-initial px-5 py-2.5 border border-slate-700/80 rounded-full hover:bg-white/10 text-slate-200 text-sm font-medium transition-colors">
+                + invite
+              </button>
+              <button 
+                onClick={() => setIsSettingsModalOpen(true)}
+                className="p-2.5 border border-slate-700/80 rounded-full hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+              >
+                <SettingsIcon size={20} />
+              </button>
+            </div>
           </div>
 
           <StatCards expenses={expenses} transactions={transactions} balances={balances} />
@@ -76,6 +86,14 @@ export default function Group({groupId,expenses,transactions,balances,loading, o
 
         </div>
       </div>
+      
+      {/* Group Settings Modal */}
+      <GroupSettingsModal 
+        isOpen={isSettingsModalOpen}
+        onClose={() => setIsSettingsModalOpen(false)}
+        groupData={groupData}
+        onUpdate={onFetchGroupData}
+      />
     </div>
   );
 }

@@ -7,6 +7,19 @@ import apiError from "../utils/apiError.js";
 
 const getGroupBalances = async (groupId, userId) => {
 
+  //Pehle check kia ko jo member hai abhi vo es grp ka member hai ki nai
+  //saare expenses extract kiya with populating paidBy names and expense name as well
+  //saare settlements extract kiya with populating from and to names
+  //initialise a balances array 
+  //iterate through expenses and add the share of each participant to the balances array to find out final owe aur to recieve
+  //iterate through settlements and add the share of each participant to the 
+      //balances array to find out final owe aur to recieve
+  // now I just seperate out depters and creditors from baalnce array and tthen make transactions
+  //in transactions, I check who has less money of the two depter and creditor and then settle that amount
+  //this keeps going on until both depter and creditor are present 
+  //finally I return the transactions
+
+
   const group = await Group.findById(groupId);
   if (!group) {
     throw new apiError(404, "Group not found");
@@ -36,9 +49,7 @@ const getGroupBalances = async (groupId, userId) => {
 
   //  Process expenses
   expenses.forEach(exp => {
-    const paidBy = exp.paidBy._id.toString();
-    console.log("PAID BY STATUS", paidBy);
-    
+    const paidBy = exp.paidBy._id.toString();    
 
     exp.participants.forEach(p => {
       const user = p.user._id.toString();

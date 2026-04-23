@@ -4,11 +4,14 @@ import ExpenseCard from '../components/group/ExpenseCard';
 import AiChat from '../components/group/AiChat';
 import { useAuth } from '../Context/Auth.Context';
 import { createSettlement } from '../Api/group.api';
+import GroupSettingsModal from '../components/group/GroupSettingsModal';
+import { Settings as SettingsIcon } from 'lucide-react';
 
 
 export default function Group2({groupId, expenses, totalSpent, transactions, balances, loading, onFetchGroupData, groupData}) {
 
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const { user }= useAuth();
   
   const myBalance = balances[user._id.toString()] || 0;
@@ -64,6 +67,12 @@ export default function Group2({groupId, expenses, totalSpent, transactions, bal
             </div>
             <button className="px-5 py-2 border border-slate-700/80 rounded-full hover:bg-white/10 text-slate-200 text-sm font-medium transition-colors">
               + invite
+            </button>
+            <button 
+              onClick={() => setIsSettingsModalOpen(true)}
+              className="p-2 border border-slate-700/80 rounded-full hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+            >
+              <SettingsIcon size={18} />
             </button>
           </div>
         </div>
@@ -175,6 +184,13 @@ export default function Group2({groupId, expenses, totalSpent, transactions, bal
         </div>
       )}
 
+       {/* Group Settings Modal */}
+       <GroupSettingsModal 
+         isOpen={isSettingsModalOpen}
+         onClose={() => setIsSettingsModalOpen(false)}
+         groupData={groupData}
+         onUpdate={onFetchGroupData}
+       />
     </div>
   );
 }

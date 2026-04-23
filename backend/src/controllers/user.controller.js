@@ -3,6 +3,7 @@ import asyncHandler from "../utils/asyncHandler.js";
 import apiError from "../utils/apiError.js";
 
 import apiResponse from "../utils/apiResponse.js";
+import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js";
 
 const generateAccessAndRefreshToken = async (userId) => {
     try {
@@ -268,6 +269,73 @@ const deleteUser=asyncHandler(async(req,res,next)=>{
         );
 })
 
+const updateAvatar = asyncHandler(async (req, res) => {
+    const avatarLocalPath = req.file?.path;
+
+    if (!avatarLocalPath) {
+        throw new apiError(400, "Avatar file is missing");
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+        throw new apiError(404, "User not found");
+    }
+
+    // Upload new image
+    const avatar = await uploadOnCloudinary(avatarLocalPath);
+
+    if (!avatar) {
+        throw new apiError(400, "Error while uploading avatar");
+    }
+
+    // Delete old image if it exists
+    if (user.avatar) {
+        const publicId = user.avatar.split("/").pop().split(".")[0];
+        //splits every part of the string where it encounters a '/'
+        //.pop() returns the last element of the array [avatar123.jpg]
+        //then again splits the last element where it encounters a '.' [avatar123, jpg]
+        //[0] returns the first part [avatar123]
+        
+        await deleteFromCloudinary(publicId);
+    }
+
+    user.avatar = avatar.url;
+    await user.save({ validateBeforeSave: false });
+
+    return res.status(200).json(
+        new apiResponse(
+            { avatar: user.avatar },
+            200,
+            "Avatar updated successfully"
+        )
+    );
+});
+
+const deleteAvatar = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+        throw new apiError(404, "User not found");
+    }
+
+    if (!user.avatar) {
+        throw new apiError(400, "No avatar to delete");
+    }
+
+    const publicId = user.avatar.split("/").pop().split(".")[0];
+    await deleteFromCloudinary(publicId);
+
+    user.avatar = "https://i.pinimg.com/474x/40/d6/55/40d655b7022ce45320f3916c10a37e19.jpg";
+    await user.save({ validateBeforeSave: false });
+
+    return res.status(200).json(
+        new apiResponse(
+            {},
+            200,
+            "Avatar deleted successfully"
+        )
+    );
+});
+
 const refreshAccessToken = asyncHandler(async (req, res) => {
     const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
 
@@ -322,5 +390,7 @@ export {
     deleteUser,
     refreshAccessToken,
     generateAccessAndRefreshToken,
-    getAllUsers
+    getAllUsers,
+    updateAvatar,
+    deleteAvatar
 }

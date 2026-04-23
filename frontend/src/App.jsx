@@ -9,7 +9,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import PublicRoute from "./Routes/PublicRoute.jsx"
 import PrivateRoute from "./Routes/PrivateRoute.jsx"
 import InvalidRoute from './pages/InvalidRoute.jsx'
-import Group2 from './pages/Group2.jsx'
+import SettingsPage from './pages/Settings.jsx'
 
 function App() {
   return (
@@ -26,7 +26,7 @@ function App() {
               }
             />
             <Route
-              path='/auth'
+              path='/login'
               element={
                 <PublicRoute>
                   <Login />
@@ -56,6 +56,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <GroupPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <PrivateRoute>
+                  <SettingsPage />
                 </PrivateRoute>
               }
             />

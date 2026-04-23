@@ -68,43 +68,77 @@ const removeMember = asyncHandler(async (req, res) => {
 });
 
 const createGroup = asyncHandler(async (req, res) => {
-  const { grpName } = req.body;
+  const { grpName, members } = req.body;
   const userId = req.user._id;
 
-  // If using multer → file upload
-  const thumbnail = req.file?.path || ""; 
-  let img=null;
-  if(!thumbnail) img= await uploadOnCloudinary(thumbnail);
+  // thumbnail is uploaded via multer (upload.single("thumbnail"))
+  const thumbnailLocalPath = req.file?.path;
+  let img = null;
+  if (thumbnailLocalPath) {
+    const response = await uploadOnCloudinary(thumbnailLocalPath);
+    img = response?.url;
+  }
 
   if (!grpName) {
     throw new apiError(400, "Group name is required");
   }
 
+  // members might come as a JSON string if sent via FormData
+  let membersList = [];
+  try {
+    membersList = typeof members === 'string' ? JSON.parse(members) : (members || []);
+  } catch (error) {
+    membersList = [];
+  }
+
+  // Ensure owner is in the members list and unique using creationn of a set
+  const allMembers = Array.from(
+    new Set([userId.toString(), ...membersList.map(m => m.toString())]));
+
   const group = await Group.create({
     grpName,
     ownerId: userId,
-    members: [userId],
+    members: allMembers,
     thumbnail: img
   });
 
   return res
-  .status(201)
-  .json(
-    new apiResponse(
-      group, 
-      201, 
-      "Group created successfully")
-  );
+    .status(201)
+    .json(
+      new apiResponse(
+        group,
+        201,
+        "Group created successfully"
+      )
+    );
 });
 
 const editGroup = asyncHandler(async (req, res) => {
   const { groupId } = req.params;
-  const { grpName } = req.body;
 
   const group = await Group.findById(groupId);
-
   if (!group) {
     throw new apiError(404, "Group not found");
+  }
+
+  //ownerId check
+  if(group.ownerId.toString() !== req.user._id.toString()){
+    throw new apiError(403, "You are not the owner of this group");
+  }
+
+  const thumbnail = req.file?.path;
+  const { grpName, deleteThumbnail } = req.body;
+
+  if(thumbnail){
+    if(group.thumbnail){
+      await deleteFileFromCloudinary(group.thumbnail);
+      group.thumbnail="";
+    }
+    const response = await uploadOnCloudinary(thumbnail);
+    group.thumbnail = response?.url;
+  } else if (deleteThumbnail === 'true' && group.thumbnail) {
+    await deleteFileFromCloudinary(group.thumbnail);
+    group.thumbnail = "";
   }
 
   // Update name if provided
@@ -112,13 +146,7 @@ const editGroup = asyncHandler(async (req, res) => {
     group.grpName = grpName;
   }
 
-  // Handle thumbnail update
-  const newthumbnail= req.file?.path||"";
-  let newimg=null;
-
-  if(newthumbnail) newimg= await uploadOnCloudinary(newthumbnail);
-
-  await group.save();
+  await group.save({validateBeforeSave: false});
 
   return res.status(200).json(
     new apiResponse(group, 200, "Group updated successfully")

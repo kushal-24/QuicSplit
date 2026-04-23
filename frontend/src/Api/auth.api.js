@@ -32,3 +32,19 @@ export const getDashboardData=async()=>{
     return api.get(`user/dashboard`);
 }
 
+export const updateAvatarApi = (formData) => {
+  return api.post("/user/updateavatar", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+export const deleteAvatarApi = () => {
+  return api.delete("/user/deleteavatar");
+};
+
+export const deleteAccountApi = () => {
+  return api.delete("/user/deleteaccount");
+};
+
