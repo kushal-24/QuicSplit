@@ -1,9 +1,13 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 
-export default function SettlementList({ transactions }) {
-  const handleSettle = () => {
-    console.log('API: mark settlement complete');
+export default function SettlementList({ transactions, onSettle }) {
+  const handleSettle = (settlement) => {
+    if (onSettle) {
+      onSettle(settlement);
+    } else {
+      console.log('API: mark settlement complete');
+    }
   };
 
   return (
@@ -19,9 +23,9 @@ export default function SettlementList({ transactions }) {
               <p className="text-sm text-slate-400">settlement</p>
             </div>
             <div className="flex items-center gap-5">
-              <span className="text-red-400 font-bold text-lg">₹{settlement.amount}</span>
+              <span className="text-red-400 font-bold text-lg">₹{Math.round(settlement.amount)}</span>
               <button 
-                onClick={handleSettle}
+                onClick={() => handleSettle(settlement)}
                 className="px-4 py-2 bg-transparent hover:bg-white/5 border border-slate-600 rounded-full text-sm font-medium text-slate-300 transition-colors"
               >
                 mark settled

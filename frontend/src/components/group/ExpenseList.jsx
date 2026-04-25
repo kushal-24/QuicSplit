@@ -34,7 +34,7 @@ const MOCK_EXPENSES = [
   },
 ];
 
-export default function ExpenseList({ expenses = MOCK_EXPENSES }) {
+export default function ExpenseList({ expenses = MOCK_EXPENSES, groupData }) {
   const displayExpenses = expenses && expenses.length > 0 ? expenses : MOCK_EXPENSES;
 
   return (
@@ -54,13 +54,8 @@ export default function ExpenseList({ expenses = MOCK_EXPENSES }) {
         {displayExpenses.map(exp => (
           <ExpenseCard 
             key={exp._id || exp.id} 
-            expenseName={exp.expenseName}
-            group={exp.group}
-            createdAt={exp.createdAt}
-            paidBy={exp.paidBy}
-            amount={exp.amount}
-            myShare={exp.myShare}
-            type={exp.type}
+            {...exp}
+            groupData={groupData}
           />
         ))}
       </div>

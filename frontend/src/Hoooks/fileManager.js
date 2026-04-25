@@ -3,9 +3,12 @@ import { uploadBill } from "../Api/group.api";
 
 export const useGroupFileUpload=()=>{
   
-  const upload=async(groupId, file)=>{
+  const upload=async(groupId, file, message)=>{
     const fd=  new FormData();
     fd.append("file", file);
+    if (message) {
+      fd.append("prompt", message); // Using "prompt" as it's a common name for AI instructions
+    }
 
     const res= await uploadBill(groupId, fd);
 

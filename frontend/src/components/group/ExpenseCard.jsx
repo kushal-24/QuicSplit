@@ -19,7 +19,7 @@ export default function ExpenseCard({groupData, expenseName, createdAt, descript
         </p>
       </div>
       <div className="text-left sm:text-right">
-        <p className="text-white font-bold text-lg">₹{amount}</p>
+        <p className="text-white font-bold text-lg">₹{Math.round(amount)}</p>
         {/* <p className={`text-sm mt-1 font-medium ${type === 'owe' ? 'text-red-400' : 'text-green-400'}`}>
           {type === 'owe' ? `you owe ₹${myShare}` : `you get ₹${myShare}`}
         </p> */}

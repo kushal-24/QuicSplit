@@ -43,7 +43,7 @@ export default function AiChat({ groupId, onFetchGroupData }) {
       setIsProcessing(true);
       try {
         setMessages(prev => [...prev, { id: Date.now() + 1, text: `Analyzing receipt/document...`, sender: 'bot' }]);
-        const res = await upload(groupId, currentFile);
+        const res = await upload(groupId, currentFile, currentInput);
 
         console.log("🔥 AI RESULT:", res);
 
@@ -125,7 +125,7 @@ export default function AiChat({ groupId, onFetchGroupData }) {
       <div className="flex-1 overflow-y-auto p-4 md:p-8 space-y-5 z-10 flex flex-col">
         {messages.map(msg => (
           <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`px-5 py-3 max-w-[85%] sm:max-w-[70%] font-medium text-[15px] flex flex-col gap-2 ${msg.sender === 'user'
+            <div className={`px-5 py-3 max-w-[85%] sm:max-w-[70%] wrap-break-word font-medium text-[15px] flex flex-col gap-2 ${msg.sender === 'user'
               ? 'bg-[#2a4469] text-blue-50 rounded-2xl rounded-tr-sm shadow-sm'
               : 'bg-[#1A1F2E] border border-slate-700/50 text-slate-200 rounded-2xl rounded-tl-sm shadow-sm'
               }`}>

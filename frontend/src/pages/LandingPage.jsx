@@ -82,12 +82,12 @@ export default function LandingPage() {
         {/* Bottom Buttons  SIGNUP AND LOGIN*/}
         <div className="mt-12 flex flex-col sm:flex-row gap-4 items-center">
           <button 
-          onClick={()=> navigate('/auth', { state:{isLogin: false}})}
+          onClick={()=> navigate('/login', { state:{isLogin: false}})}
           className="w-full sm:w-auto px-8 py-3.5 bg-[#25394B] hover:bg-[#1A2A3A] dark:bg-white dark:hover:bg-gray-200 text-white dark:text-[#25394B] text-sm md:text-base font-semibold rounded-lg transition-all duration-300 shadow-xl flex items-center justify-center gap-3">
             Sign up <ArrowRight size={18} />
           </button>
           <button 
-          onClick={()=> navigate('/auth', { state:{isLogin: true}})}
+          onClick={()=> navigate('/login', { state:{isLogin: true}})}
           className="w-full sm:w-auto px-8 py-3.5 bg-transparent hover:bg-black/5 dark:hover:bg-white/10 text-[#25394B] dark:text-white text-sm md:text-base font-semibold rounded-lg transition-all duration-300 flex items-center justify-center">
             Login
           </button>

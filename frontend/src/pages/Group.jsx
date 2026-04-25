@@ -5,10 +5,31 @@ import StatCards from '../components/group/StatCards';
 import ExpenseList from '../components/group/ExpenseList';
 import SettlementList from '../components/group/SettlementList';
 import AiChat from '../components/group/AiChat';
+import { useAuth } from '../Context/Auth.Context';
+import { createSettlement } from '../Api/group.api';
 
-export default function Group({groupId,expenses,transactions,balances,loading, onFetchGroupData, groupData}) {
+export default function Group({groupId,expenses,transactions,balances,loading, onFetchGroupData, groupData, totalSpent}) {
   const [activeTab, setActiveTab] = useState('expenses');
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const { user }= useAuth();
+  
+  const myBalance = balances[user._id.toString()] || 0;
+
+  const markSettledHandler= async(settlement)=>{
+    //if user is neither from nor to, then skip
+    if(settlement.from._id !== user._id && settlement.to._id !== user._id){
+      return;
+    }
+    const newSettlement={
+      group: groupId,
+      from: settlement.from._id,
+      to: settlement.to._id,
+      amount: settlement.amount,
+    }
+    const res = await createSettlement(groupId, newSettlement);
+    await onFetchGroupData();
+    console.log("RES", res);
+  }
 
   return (
     <div className="min-h-screen bg-[#0A0D14] font-sans text-slate-200 relative">
@@ -23,40 +44,68 @@ export default function Group({groupId,expenses,transactions,balances,loading, o
         {/* Core Container matching the screenshot */}
         <div className="bg-[#12141a]/95 backdrop-blur-2xl border border-slate-800/80 rounded-4xl p-4 sm:p-8 md:p-10 shadow-2xl">
           
-          {/* Header row */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-slate-800/80">
-            <div className="flex items-center gap-4">
+          {/* Header Section */}
+          <div className="flex flex-col gap-6 mb-8 pb-6 border-b border-slate-800/80">
+            {/* Top Row: Navigation and Members */}
+            <div className="flex items-center justify-between">
               <button className="flex items-center gap-1.5 text-slate-400 hover:text-slate-200 transition-colors">
-                <ArrowLeft size={18} />
-                <span className="text-base font-medium">groups</span>
+                {/* <ArrowLeft size={18} /> */}
+                <span className="text-base font-medium">Groups</span>
               </button>
               
-              <div className="w-px h-6 bg-slate-700/60 hidden sm:block"></div>
-              
-              <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight break-all">Goa Trip</h1>
-              
-              <div className="flex -space-x-2 ml-2">
-                <div className="w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-300 border-[1.5px] border-[#12141a] flex items-center justify-center text-xs font-semibold z-40">RK</div>
-                <div className="w-8 h-8 rounded-full bg-teal-500/20 text-teal-300 border-[1.5px] border-[#12141a] flex items-center justify-center text-xs font-semibold z-30">HS</div>
-                <div className="w-8 h-8 rounded-full bg-orange-500/20 text-orange-300 border-[1.5px] border-[#12141a] flex items-center justify-center text-xs font-semibold z-20">PR</div>
-                <div className="w-8 h-8 rounded-full bg-blue-500/20 text-blue-300 border-[1.5px] border-[#12141a] flex items-center justify-center text-xs font-semibold z-10">KM</div>
+              <div className="flex -space-x-2">
+                {groupData.members?.map((member, idx) => {
+                  const colors = [
+                    { bg: 'bg-indigo-500/20', text: 'text-indigo-300' },
+                    { bg: 'bg-teal-500/20', text: 'text-teal-300' },
+                    { bg: 'bg-orange-500/20', text: 'text-orange-300' },
+                    { bg: 'bg-blue-500/20', text: 'text-blue-300' },
+                    { bg: 'bg-purple-500/20', text: 'text-purple-300' },
+                  ];
+                  const color = colors[idx % colors.length];
+                  const initials = member.fullName?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || '??';
+                  return (
+                    <div 
+                      key={member._id}
+                      className={`w-8 h-8 rounded-full ${color.bg} ${color.text} border-[1.5px] border-[#12141a] flex items-center justify-center text-xs font-semibold z-[${50 - idx}]`}
+                      title={member.fullName}
+                    >
+                      {initials}
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
-            <div className="flex items-center gap-2 w-full sm:w-auto">
-              <button className="flex-1 sm:flex-initial px-5 py-2.5 border border-slate-700/80 rounded-full hover:bg-white/10 text-slate-200 text-sm font-medium transition-colors">
-                + invite
-              </button>
+            {/* Middle Row: Group Title */}
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+              <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tighter leading-[0.9]">
+                {groupData.grpName}
+              </h1>
+              <div className="flex items-center gap-2 sm:mb-1">
+                <span className="text-slate-400 font-medium text-sm">Spent</span>
+                <span className="text-white font-bold text-xl">₹{Math.round(totalSpent || 0)}</span>
+              </div>
+            </div>
+
+            {/* Bottom Row: Actions */}
+            <div className="flex items-center gap-3">
               <button 
                 onClick={() => setIsSettingsModalOpen(true)}
-                className="p-2.5 border border-slate-700/80 rounded-full hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+                className="p-3.5 bg-white/5 hover:bg-white/10 border border-slate-800 rounded-2xl text-slate-400 hover:text-white transition-all"
               >
-                <SettingsIcon size={20} />
+                <SettingsIcon size={22} />
               </button>
             </div>
           </div>
 
-          <StatCards expenses={expenses} transactions={transactions} balances={balances} />
+          <StatCards 
+            expenses={expenses} 
+            transactions={transactions} 
+            balances={balances} 
+            totalSpent={totalSpent} 
+            myBalance={myBalance} 
+          />
 
           {/* Navigation Tabs */}
           <div className="flex items-center gap-3 mb-8 border-b border-slate-800/80 pb-6 overflow-x-auto">
@@ -77,8 +126,8 @@ export default function Group({groupId,expenses,transactions,balances,loading, o
 
           {/* Tab Content Rendering */}
           <div className="min-h-[400px]">
-             {activeTab === 'expenses' && <ExpenseList expenses={expenses} />}
-             {activeTab === 'settlements' && <SettlementList transactions={transactions} />}
+             {activeTab === 'expenses' && <ExpenseList expenses={expenses} groupData={groupData} />}
+              {activeTab === 'settlements' && <SettlementList transactions={transactions} onSettle={markSettledHandler} />}
              {activeTab === 'ai chat' && <AiChat 
              groupId={groupId}
              onFetchGroupData={onFetchGroupData} />}

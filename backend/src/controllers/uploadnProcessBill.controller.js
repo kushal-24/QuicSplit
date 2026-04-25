@@ -46,38 +46,45 @@ const uploadAndProcessBill = asyncHandler(async (req, res) => {
     const mimeType = req.file.mimetype; // e.g. "image/jpeg"
 
 
-    const result = await llm.invoke([
-        new HumanMessage({
-            content: [
-                {
-                    type: "image_url",
-                    image_url: { url: `data:${mimeType};base64,${base64Image}` }
-                },
-                {
-                    type: "text",
-                    text: `You are a receipt scanner. Extract details from this receipt image.
-                Return ONLY a valid JSON object, no markdown, no explanation:
-                {
-                    "expenseName": "merchant or bill name",
-                    "amount": 999.00,
-                    "description": "short description of what was purchased",
-                    "ocrText": "full raw text you can read from the receipt"
-                }`
-                }
-            ]
-        })
-    ]);
-    const raw = result.content;
-    const clean = raw.replace(/```json|```/g, "").trim();
+    const { prompt } = req.body;
 
     let extractedData;
     try {
+        const result = await llm.invoke([
+            new HumanMessage({
+                content: [
+                    {
+                        type: "image_url",
+                        image_url: { url: `data:${mimeType};base64,${base64Image}` }
+                    },
+                    {
+                        type: "text",
+                        text: `You are a receipt scanner. Extract details from this receipt image.
+                        When a bill is uploaded, scan it for who paid or search in the text prompt who paid. 
+                        If you still dont get who paid, ONLY THEN assume that the user uploading the bill has paid it.
+                        ${prompt ? 
+                        `USER INSTRUCTION: 
+                        ${prompt}` : ""}
+                    Return ONLY a valid JSON object, no markdown, no explanation:
+                    { 
+                        "expenseName": "merchant or bill name",
+                        "amount": 999.00,
+                        "description": "short description of what was purchased",
+                        "ocrText": "full raw text you can read from the receipt",
+                        "paidBy": "full name  of the person who paid the whole bill, if not specified, consider the user paid the whole bill who uploaded the bill"
+                    }`
+                    }
+                ]
+            })
+        ]);
+        const raw = result.content;
+        const clean = raw.replace(/```json|```/g, "").trim();
         extractedData = JSON.parse(clean);
     } catch (err) {
-        throw new apiError(500, "Gemini returned invalid JSON: " + raw);
+        throw new apiError(500, "AI processing or JSON parsing failed: " + err.message);
     }
 
-    const { expenseName, amount, description, ocrText } = extractedData;
+    const { expenseName, amount, description, ocrText, paidBy } = extractedData;
 
     const finalAmount = parseFloat(amount);
 
@@ -90,7 +97,8 @@ const uploadAndProcessBill = asyncHandler(async (req, res) => {
         group: groupId,
         ocrText: ocrText,
         extractedAmount: finalAmount,
-        extractedTitle: expenseName
+        extractedTitle: expenseName,
+        paidBy
     });
 
     //Split among members

@@ -48,26 +48,39 @@ export default function Group2({groupId, expenses, totalSpent, transactions, bal
         <div className="flex items-center justify-between p-6 border-b border-slate-800/80 bg-[#12141a]">
           <div className="flex items-center gap-4">
             <button className="flex items-center gap-1.5 text-slate-400 hover:text-slate-200 transition-colors">
-              <ArrowLeft size={18} />
-              <span className="text-base font-medium">groups</span>
+              {/* <ArrowLeft size={18} /> */}
+              <span className="text-base font-medium">Groups</span>
             </button>
             <div className="w-px h-6 bg-slate-700/60 hidden sm:block"></div>
             <h1 className="text-2xl font-bold text-white tracking-tight">{groupData.grpName}</h1>
             <div className="flex -space-x-2 ml-2">
-              <div className="w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-300 border-[1.5px] border-[#12141a] flex items-center justify-center text-xs font-semibold z-40">RK</div>
-              <div className="w-8 h-8 rounded-full bg-teal-500/20 text-teal-300 border-[1.5px] border-[#12141a] flex items-center justify-center text-xs font-semibold z-30">HS</div>
-              <div className="w-8 h-8 rounded-full bg-orange-500/20 text-orange-300 border-[1.5px] border-[#12141a] flex items-center justify-center text-xs font-semibold z-20">PR</div>
-              <div className="w-8 h-8 rounded-full bg-blue-500/20 text-blue-300 border-[1.5px] border-[#12141a] flex items-center justify-center text-xs font-semibold z-10">KM</div>
+              {groupData.members?.map((member, idx) => {
+                const colors = [
+                  { bg: 'bg-indigo-500/20', text: 'text-indigo-300' },
+                  { bg: 'bg-teal-500/20', text: 'text-teal-300' },
+                  { bg: 'bg-orange-500/20', text: 'text-orange-300' },
+                  { bg: 'bg-blue-500/20', text: 'text-blue-300' },
+                  { bg: 'bg-purple-500/20', text: 'text-purple-300' },
+                ];
+                const color = colors[idx % colors.length];
+                const initials = member.fullName?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || '??';
+                return (
+                  <div 
+                    key={member._id}
+                    className={`w-8 h-8 rounded-full ${color.bg} ${color.text} border-[1.5px] border-[#12141a] flex items-center justify-center text-xs font-semibold z-[${50 - idx}]`}
+                    title={member.fullName}
+                  >
+                    {initials}
+                  </div>
+                );
+              })}
             </div>
           </div>
           <div className="flex items-center gap-6">
             <div className="hidden sm:flex items-center gap-2">
               <span className="text-slate-400 font-medium text-sm">Total spent</span>
-              <span className="text-white font-bold text-lg">₹{totalSpent || 0}</span>
+              <span className="text-white font-bold text-lg">₹{Math.round(totalSpent || 0)}</span>
             </div>
-            <button className="px-5 py-2 border border-slate-700/80 rounded-full hover:bg-white/10 text-slate-200 text-sm font-medium transition-colors">
-              + invite
-            </button>
             <button 
               onClick={() => setIsSettingsModalOpen(true)}
               className="p-2 border border-slate-700/80 rounded-full hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
@@ -91,9 +104,6 @@ export default function Group2({groupId, expenses, totalSpent, transactions, bal
                   <button className="px-3 py-1 bg-transparent hover:bg-white/5 border border-slate-700 rounded-full text-xs font-medium text-slate-300 transition-colors">
                     + add
                   </button>
-                  <button className="px-3 py-1 bg-transparent hover:bg-white/5 border border-slate-700 rounded-full text-xs font-medium text-slate-300 transition-colors">
-                    upload bill
-                  </button>
                 </div>
               </div>
               <div className="flex-1 overflow-y-auto px-6 pb-6 custom-scrollbar">
@@ -104,7 +114,7 @@ export default function Group2({groupId, expenses, totalSpent, transactions, bal
                 {/* Net Balance Highlight */}
                 <div className="mt-6 p-5 bg-[#1A1F2E]/40 border border-slate-800/80 rounded-2xl">
                   <p className="text-sm text-slate-400 font-medium mb-1">your net balance</p>
-                  <p className="text-3xl font-bold text-red-400 tracking-tight">{myBalance >=0 ? `+ ₹${myBalance}` : `- ₹${Math.abs(myBalance)} owed`}</p>
+                  <p className="text-3xl font-bold text-red-400 tracking-tight">{myBalance >=0 ? `+ ₹${Math.round(myBalance)}` : `- ₹${Math.round(Math.abs(myBalance))} owed`}</p>
                 </div>
               </div>
             </div>
@@ -122,7 +132,7 @@ export default function Group2({groupId, expenses, totalSpent, transactions, bal
                         {settlement.from?.name} 
                         <ArrowRight className="mx-2 text-slate-500" size={14}/> 
                         {settlement.to?.name} 
-                        <span className="ml-2 font-bold">₹{settlement.amount}</span>
+                        <span className="ml-2 font-bold">₹{Math.round(settlement.amount)}</span>
                       </p>
                       <button 
                       onClick={()=>markSettledHandler(settlement)}
