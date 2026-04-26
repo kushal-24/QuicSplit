@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Plus, X, FileText } from 'lucide-react';
+import { Plus, X, FileText, Sparkles } from 'lucide-react';
 import { useGroupFileUpload } from '../../Hoooks/fileManager';
 import { chatWithAi } from '../../Api/group.api';
 import ReactMarkdown from "react-markdown"
@@ -120,11 +120,35 @@ export default function AiChat({ groupId, onFetchGroupData }) {
 
   return (
     <div className="flex flex-col h-full min-h-[400px] max-h-[600px] border border-slate-800/80 bg-[#0A0D14]/50 rounded-2xl animate-in fade-in duration-300 relative overflow-hidden">
+      
+      {/* Gemini Header */}
+      <div className="px-6 py-4 border-b border-slate-800/80 bg-[#1A1F2E]/40 backdrop-blur-md flex items-center justify-between z-20">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#6B5AED] to-[#8879FF] flex items-center justify-center shadow-lg shadow-[#6B5AED]/20">
+            <Sparkles size={18} className="text-white" />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-white tracking-wide">Gemini AI</h3>
+            <div className="flex items-center gap-1.5">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+              <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tighter">Authenticated Agent</p>
+            </div>
+          </div>
+        </div>
+        <div className="px-2.5 py-1 rounded-md bg-[#6B5AED]/10 border border-[#6B5AED]/20">
+           <span className="text-[10px] font-bold text-[#8879FF] uppercase tracking-widest">v1.5 Pro</span>
+        </div>
+      </div>
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-4 md:p-8 space-y-5 z-10 flex flex-col">
         {messages.map(msg => (
-          <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+          <div key={msg.id} className={`flex items-start gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+            {msg.sender !== 'user' && (
+              <div className="w-8 h-8 rounded-full bg-[#1A1F2E] border border-slate-700/50 flex items-center justify-center flex-shrink-0 mt-1 shadow-sm">
+                <Sparkles size={14} className="text-[#8879FF]" />
+              </div>
+            )}
             <div className={`px-5 py-3 max-w-[85%] sm:max-w-[70%] wrap-break-word font-medium text-[15px] flex flex-col gap-2 ${msg.sender === 'user'
               ? 'bg-[#2a4469] text-blue-50 rounded-2xl rounded-tr-sm shadow-sm'
               : 'bg-[#1A1F2E] border border-slate-700/50 text-slate-200 rounded-2xl rounded-tl-sm shadow-sm'
@@ -143,11 +167,14 @@ export default function AiChat({ groupId, onFetchGroupData }) {
           </div>
         ))}
         {isProcessing && (
-          <div className="flex justify-start">
+          <div className="flex items-start gap-3 justify-start">
+            <div className="w-8 h-8 rounded-full bg-[#1A1F2E] border border-slate-700/50 flex items-center justify-center flex-shrink-0 mt-1 shadow-sm">
+              <Sparkles size={14} className="text-[#8879FF] animate-pulse" />
+            </div>
             <div className="px-5 py-3 bg-[#1A1F2E] border border-slate-700/50 text-slate-400 rounded-2xl rounded-tl-sm shadow-sm animate-pulse flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-slate-500 animate-bounce" style={{ animationDelay: '0ms' }} />
-              <div className="w-2 h-2 rounded-full bg-slate-500 animate-bounce" style={{ animationDelay: '150ms' }} />
-              <div className="w-2 h-2 rounded-full bg-slate-500 animate-bounce" style={{ animationDelay: '300ms' }} />
+              <div className="w-1.5 h-1.5 rounded-full bg-slate-500 animate-bounce" style={{ animationDelay: '0ms' }} />
+              <div className="w-1.5 h-1.5 rounded-full bg-slate-500 animate-bounce" style={{ animationDelay: '150ms' }} />
+              <div className="w-1.5 h-1.5 rounded-full bg-slate-500 animate-bounce" style={{ animationDelay: '300ms' }} />
             </div>
           </div>
         )}

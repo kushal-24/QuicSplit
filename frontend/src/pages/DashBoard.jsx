@@ -124,6 +124,7 @@ export default function DashBoard() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {groups?.map((group) => {
               const color = colors[group.name.charCodeAt(0) % colors.length]
+              const balanceRounded= group.myBalance.toFixed(2)
               return(
               <div 
                 key={group._id} 
@@ -159,11 +160,11 @@ export default function DashBoard() {
                     </p>
                     <p className={`font-semibold text-lg ${
                       group.myBalance < 0 ? 'text-red-400' : 
-                      group.myBalance > 0 ? 'text-green-400' : 
+                      balanceRounded > 0 ? 'text-green-400' : 
                       'text-slate-300'
                     }`}>
-                      {group.myBalance < 0 ? `You owe ₹${Math.abs(group.myBalance)}` : 
-                       group.myBalance > 0 ? `Owed ₹${group.myBalance}` : 
+                      {balanceRounded < 0 ? `You owe ₹${Math.abs(balanceRounded)}` : 
+                       balanceRounded > 0 ? `Owed ₹${balanceRounded}` : 
                        'Settled up'}
                     </p>
                   </div>

@@ -2,6 +2,8 @@ import express from "express"
 import cookieParser from "cookie-parser"
 import cors from "cors"
 import passport from "passport"
+import "./config/passport.js"
+import googleAuthRouter from "./routes/googleAuth.routes.js"
 
 
 
@@ -12,7 +14,7 @@ app.use(cors({
     credentials: true,
 }))
 
-// app.use("/auth",googleAuthRoutes)
+app.use("/api/v1/auth", googleAuthRouter)
 app.use(passport.initialize());
 app.use(express.json({limit: "16kb"}));
 app.use(express.urlencoded({extended: true, limit:"16kb"}));
