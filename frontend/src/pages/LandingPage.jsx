@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Moon, Sun, Combine, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../Context/Theme.Context';
 
 const useTypewriter = (text, speed = 50) => {
   const [displayedText, setDisplayedText] = useState('');
@@ -27,24 +28,16 @@ const useTypewriter = (text, speed = 50) => {
 };
 
 export default function LandingPage() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { isDarkMode, toggleTheme } = useTheme();
   const navigate=useNavigate();
 
   const headingText = "Modern payments for forward-thinking teams";
   const typedHeading = useTypewriter(headingText, 45);
 
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isDarkMode]);
-
-  const toggleTheme = () => setIsDarkMode(!isDarkMode);
+  // Global theme is managed by ThemeProvider now
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-[#EDEDED] dark:bg-[#0A0D14] font-sans antialiased transition-colors duration-500 overflow-hidden">
+    <div className="min-h-screen flex flex-col md:flex-row bg-[#EDEDED] dark:bg-[#0A0D14] font-sans antialiased transition-colors duration-500 overflow-hidden animate-page-enter">
       {/* Theme Toggle Floating Button THEME CHANGE BUTTON */}
       <div className="absolute top-6 right-6 lg:top-8 lg:right-8 z-50">
         <button

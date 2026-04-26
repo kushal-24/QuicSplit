@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Lock, User, ArrowRight, Sun, Moon } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight, Sun, Moon, AlertCircle, Check } from 'lucide-react';
 import { signupApi } from '../Api/auth.api';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../Context/Auth.Context';
+import { useTheme } from '../Context/Theme.Context';
 
 export default function Login() {
   const location = useLocation();
   const [isLogin, setIsLogin] = useState(location.state?.isLogin ?? true);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { isDarkMode, toggleTheme } = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,30 +25,27 @@ export default function Login() {
   };
 
   const onSubmitHandler = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
+    setErrorMsg("");
+    setSuccessMsg("");
+
+    // Basic validation
+    if (!email || !password || (!isLogin && !fullName)) {
+      setErrorMsg("Please fill in all required fields.");
+      return;
+    }
+
     setLoading(true);
 
     if (isLogin) {
       try {
         await login({ email, password });
         navigate("/dashboard");
-        setSuccessMsg("logged in successfully");
-        console.log(successMsg);
-        
+        setSuccessMsg("Logged in successfully!");
       } 
       catch (error) {
-        const status = error?.response?.status;
-        const message = error?.response?.data?.message;
-
-        if (message) setErrorMsg(message)
-        else if (status === 400 || status === 401) {
-          setErrorMsg("Invalid email or password");
-        } else if (status === 500) {
-          setErrorMsg("Server error. Please try again later.");
-        } else {
-          setErrorMsg("Something went wrong. Please try again.");
-        }
-        console.log(errorMsg);
+        const message = error?.response?.data?.message || "Invalid email or password";
+        setErrorMsg(message);
       }
       finally {
         setLoading(false);
@@ -55,23 +53,12 @@ export default function Login() {
     }
     else {
       try {
-        const response = await signupApi({email, password, fullName});
-        setSuccessMsg("Account created successfully");
-        console.log(successMsg);
+        await signupApi({email, password, fullName});
+        setSuccessMsg("Account created successfully! Please log in.");
         setIsLogin(true);
       } catch (error) {
-        const status = error?.response?.status;
-        const message = error?.response?.data?.message;
-
-        if (message) setErrorMsg(message)
-        else if (status === 400 || status === 401) {
-          setErrorMsg("Incomplete details");
-        } else if (status === 500) {
-          setErrorMsg("Server error. Please try again later.");
-        } else {
-          setErrorMsg("Something went wrong. Please try again.");
-        }
-        console.log(errorMsg);
+        const message = error?.response?.data?.message || "Failed to create account";
+        setErrorMsg(message);
       }
       finally {
         setLoading(false);
@@ -79,19 +66,12 @@ export default function Login() {
     }
   }
 
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isDarkMode]);
-
-  const toggleTheme = () => setIsDarkMode(!isDarkMode);
+  // Global theme is managed by ThemeProvider now
+  
   const toggleMode = () => setIsLogin(!isLogin);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[rgb(244,247,254)] dark:bg-[#0A0D14] font-sans p-4 transition-colors duration-500 relative">
+    <div className="min-h-screen flex items-center justify-center bg-[rgb(244,247,254)] dark:bg-[#0A0D14] font-sans p-4 transition-colors duration-500 relative animate-page-enter">
       {/* Theme Toggle Button */}
       <div className="absolute top-6 right-6 lg:top-8 lg:right-8 z-50">
         <button
@@ -127,6 +107,22 @@ export default function Login() {
 
         {/* Form */}
         <form className="space-y-4 relative z-10" onSubmit={onSubmitHandler}>
+          
+          {/* Error Message */}
+          {errorMsg && (
+            <div className="p-3.5 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3 text-red-500 text-sm animate-in fade-in slide-in-from-top-2 duration-300">
+              <AlertCircle size={18} className="shrink-0" />
+              <span>{errorMsg}</span>
+            </div>
+          )}
+
+          {/* Success Message */}
+          {successMsg && (
+            <div className="p-3.5 bg-green-500/10 border border-green-500/20 rounded-xl flex items-center gap-3 text-green-500 text-sm animate-in fade-in slide-in-from-top-2 duration-300">
+              <Check size={18} className="shrink-0" />
+              <span>{successMsg}</span>
+            </div>
+          )}
           {/* SIGNUP COMPONENT */}
           {!isLogin && (
             <div className="space-y-1 animate-in fade-in slide-in-from-top-2 duration-300">

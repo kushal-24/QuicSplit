@@ -5,10 +5,12 @@ import AiChat from '../components/group/AiChat';
 import { useAuth } from '../Context/Auth.Context';
 import { createSettlement } from '../Api/group.api';
 import GroupSettingsModal from '../components/group/GroupSettingsModal';
-import { Settings as SettingsIcon } from 'lucide-react';
-
+import { Settings as SettingsIcon, Moon, Sun } from 'lucide-react';
+import { PremiumLoader } from '../components/common/LoadingStates';
+import { useTheme } from '../Context/Theme.Context';
 
 export default function Group2({groupId, expenses, totalSpent, transactions, balances, loading, onFetchGroupData, groupData}) {
+  const { isDarkMode, toggleTheme } = useTheme();
 
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
@@ -32,27 +34,38 @@ export default function Group2({groupId, expenses, totalSpent, transactions, bal
     console.log("RES", res);
   }
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0A0D14] flex items-center justify-center">
+        <PremiumLoader />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-[#0A0D14] font-sans text-slate-200 relative flex flex-col p-4 md:p-6 h-screen overflow-hidden">
+    <div className={`min-h-screen ${isDarkMode ? 'bg-[#0A0D14]' : 'bg-[#F8FAFC]'} font-sans text-slate-700 dark:text-slate-200 relative flex flex-col p-4 md:p-6 h-screen overflow-hidden animate-page-enter transition-colors duration-300`}>
       
       {/* Background Aesthetic */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-size-[40px_40px]"></div>
-        <div className="absolute top-0 left-0 right-0 h-[800px] bg-linear-to-br from-[#6B5AED]/20 via-[#6B5AED]/5 to-transparent blur-[130px]"></div>
+        <div className={`absolute inset-0 ${isDarkMode ? 'bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)]' : 'bg-[linear-gradient(rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.03)_1px,transparent_1px)]'} bg-size-[40px_40px]`}></div>
+        <div className={`absolute top-0 left-0 right-0 h-[800px] ${isDarkMode ? 'bg-linear-to-br from-[#6B5AED]/20 via-[#6B5AED]/5 to-transparent' : 'bg-linear-to-br from-[#6B5AED]/10 via-[#6B5AED]/5 to-transparent'} blur-[130px]`}></div>
       </div>
 
       {/* Main OS-style App Window */}
-      <div className="bg-[#12141a]/95 backdrop-blur-2xl border border-slate-800/80 rounded-4xl flex flex-col flex-1 relative z-10 shadow-2xl overflow-hidden w-full max-w-7xl mx-auto">
+      <div className="bg-white/90 dark:bg-[#12141a]/95 backdrop-blur-2xl border border-slate-200 dark:border-slate-800/80 rounded-4xl flex flex-col flex-1 relative z-10 shadow-2xl overflow-hidden w-full max-w-7xl mx-auto transition-colors">
         
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-800/80 bg-[#12141a]">
+        <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-800/80 bg-white dark:bg-[#12141a] transition-colors">
           <div className="flex items-center gap-4">
-            <button className="flex items-center gap-1.5 text-slate-400 hover:text-slate-200 transition-colors">
-              {/* <ArrowLeft size={18} /> */}
+            <button 
+              onClick={() => navigate('/dashboard')}
+              className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-[#6B5AED] dark:hover:text-slate-200 transition-colors cursor-pointer"
+            >
+              <ArrowLeft size={18} />
               <span className="text-base font-medium">Groups</span>
             </button>
-            <div className="w-px h-6 bg-slate-700/60 hidden sm:block"></div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">{groupData.grpName}</h1>
+            <div className="w-px h-6 bg-slate-200 dark:bg-slate-700/60 hidden sm:block"></div>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{groupData.grpName}</h1>
             <div className="flex -space-x-2 ml-2">
               {groupData.members?.map((member, idx) => {
                 const colors = [
@@ -76,14 +89,20 @@ export default function Group2({groupId, expenses, totalSpent, transactions, bal
               })}
             </div>
           </div>
-          <div className="flex items-center gap-6">
-            <div className="hidden sm:flex items-center gap-2">
-              <span className="text-slate-400 font-medium text-sm">Total spent</span>
-              <span className="text-white font-bold text-lg">₹{Math.round(totalSpent || 0)}</span>
+          <div className="flex items-center gap-4">
+            <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-slate-50 dark:bg-slate-800/40 rounded-full border border-slate-200 dark:border-slate-700 transition-colors">
+              <span className="text-slate-500 dark:text-slate-400 font-medium text-xs uppercase tracking-wider">Total spent</span>
+              <span className="text-slate-900 dark:text-white font-bold text-base">₹{Math.round(totalSpent || 0)}</span>
             </div>
             <button 
+              onClick={toggleTheme}
+              className="p-2.5 bg-slate-100 dark:bg-[#1A1F2E] border border-slate-200 dark:border-slate-700/80 rounded-full hover:text-[#6B5AED] transition-all cursor-pointer"
+            >
+              {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+            <button 
               onClick={() => setIsSettingsModalOpen(true)}
-              className="p-2 border border-slate-700/80 rounded-full hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+              className="p-2.5 bg-slate-100 dark:bg-[#1A1F2E] border border-slate-200 dark:border-slate-700/80 rounded-full hover:text-[#6B5AED] transition-all cursor-pointer"
             >
               <SettingsIcon size={18} />
             </button>
@@ -94,27 +113,29 @@ export default function Group2({groupId, expenses, totalSpent, transactions, bal
         <div className="flex flex-1 overflow-hidden">
  
           {/* Left Column (Expenses & Settlements) */}
-          <div className="w-full lg:w-1/2 xl:w-[55%] flex flex-col border-r border-slate-800/80">
+          <div className="w-full lg:w-1/2 xl:w-[55%] flex flex-col border-r border-slate-200 dark:border-slate-800/80 transition-colors">
             
             {/* Expenses Section (Individually Scrollable) */}
-            <div className="h-1/2 min-h-0 flex flex-col border-b border-slate-800/80">
+            <div className="h-1/2 min-h-0 flex flex-col border-b border-slate-200 dark:border-slate-800/80 transition-colors">
               <div className="flex items-center justify-between p-6 pb-4">
-                <h2 className="text-xs font-bold tracking-wider text-slate-400 uppercase">Expenses</h2>
+                <h2 className="text-xs font-bold tracking-wider text-slate-500 dark:text-slate-400 uppercase">Expenses</h2>
                 <div className="flex gap-2">
-                  <button className="px-3 py-1 bg-transparent hover:bg-white/5 border border-slate-700 rounded-full text-xs font-medium text-slate-300 transition-colors">
-                    + add
+                  <button className="px-4 py-1.5 bg-slate-50 dark:bg-transparent hover:bg-[#6B5AED] hover:text-white border border-slate-200 dark:border-slate-700 rounded-full text-xs font-semibold text-slate-600 dark:text-slate-300 transition-all cursor-pointer">
+                    + add expense
                   </button>
                 </div>
               </div>
               <div className="flex-1 overflow-y-auto px-6 pb-6 custom-scrollbar">
-                {expenses ? expenses.map(exp => (
-                  <ExpenseCard key={exp.id} {...exp} groupData={groupData} />
+                {expenses ? expenses.map((exp, index) => (
+                  <ExpenseCard key={exp.id || index} {...exp} groupData={groupData} index={index} />
                 )) : <p>No expenses found</p>}
                 
                 {/* Net Balance Highlight */}
-                <div className="mt-6 p-5 bg-[#1A1F2E]/40 border border-slate-800/80 rounded-2xl">
-                  <p className="text-sm text-slate-400 font-medium mb-1">your net balance</p>
-                  <p className="text-3xl font-bold text-red-400 tracking-tight">{myBalance >=0 ? `+ ₹${Math.round(myBalance)}` : `- ₹${Math.round(Math.abs(myBalance))} owed`}</p>
+                <div className="mt-6 p-5 bg-slate-50 dark:bg-[#1A1F2E]/40 border border-slate-200 dark:border-slate-800/80 rounded-2xl transition-colors">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mb-1">your net balance</p>
+                  <p className={`text-3xl font-bold tracking-tight ${myBalance >= 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
+                    {myBalance >=0 ? `+ ₹${Math.round(myBalance)}` : `- ₹${Math.round(Math.abs(myBalance))} owed`}
+                  </p>
                 </div>
               </div>
             </div>
@@ -122,13 +143,17 @@ export default function Group2({groupId, expenses, totalSpent, transactions, bal
             {/* Settlements Section (Individually Scrollable) */}
             <div className="h-1/2 min-h-0 flex flex-col">
               <div className="p-6 pb-4">
-                <h2 className="text-xs font-bold tracking-wider text-slate-400 uppercase">Settlements Needed</h2>
+                <h2 className="text-xs font-bold tracking-wider text-slate-500 dark:text-slate-400 uppercase">Settlements Needed</h2>
               </div>
               <div className="flex-1 overflow-y-auto px-6 pb-6 custom-scrollbar">
                 <div className="space-y-3">
                   {transactions?.map((settlement, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 bg-[#1A1F2E]/30 border border-slate-800/80 rounded-xl hover:bg-[#1A1F2E]/60 transition-colors">
-                      <p className="text-white font-medium text-sm sm:text-base flex items-center">
+                    <div 
+                      key={index} 
+                      style={{ animationDelay: `${index * 80}ms` }}
+                      className="flex items-center justify-between p-4 bg-slate-50 dark:bg-[#1A1F2E]/30 border border-slate-200 dark:border-slate-800/80 rounded-xl hover:bg-slate-100 dark:hover:bg-[#1A1F2E]/60 transition-colors animate-slide-up opacity-0"
+                    >
+                      <p className="text-slate-900 dark:text-white font-medium text-sm sm:text-base flex items-center">
                         {settlement.from?.name} 
                         <ArrowRight className="mx-2 text-slate-500" size={14}/> 
                         {settlement.to?.name} 
@@ -136,7 +161,7 @@ export default function Group2({groupId, expenses, totalSpent, transactions, bal
                       </p>
                       <button 
                       onClick={()=>markSettledHandler(settlement)}
-                      className="px-3 py-1.5 border border-[#304B3B] text-[#4ADE80] bg-[#4ADE80]/10 rounded-full text-xs font-semibold hover:bg-[#4ADE80]/20 transition-colors">
+                      className="px-3 py-1.5 border border-emerald-200 dark:border-[#304B3B] text-emerald-600 dark:text-[#4ADE80] bg-emerald-50 dark:bg-[#4ADE80]/10 rounded-full text-xs font-bold hover:bg-emerald-100 dark:hover:bg-[#4ADE80]/20 transition-all cursor-pointer">
                         mark settled
                       </button>
                     </div>

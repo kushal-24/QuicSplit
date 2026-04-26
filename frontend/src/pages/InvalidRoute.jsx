@@ -5,7 +5,7 @@ const InvalidRoute = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-linear-to-br from-slate-950 via-slate-900 to-slate-950 overflow-hidden px-6">
+    <div className="relative min-h-screen flex items-center justify-center bg-linear-to-br from-slate-950 via-slate-900 to-slate-950 overflow-hidden px-6 animate-page-enter">
 
       {/* Ambient gradient blobs */}
       <div className="absolute -top-40 -left-40 w-125 h-125 bg-cyan-500/10 rounded-full blur-3xl" />

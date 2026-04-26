@@ -2,11 +2,14 @@ import { useState, useRef, useEffect } from 'react';
 import { Combine, Settings, User, Lock, Trash2, ArrowLeft, Camera, X, Check, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../Context/Auth.Context';
+import { useTheme } from '../Context/Theme.Context';
 import { changeFullName, changePassApi, updateAvatarApi, deleteAvatarApi, deleteAccountApi, getMeApi } from '../Api/auth.api';
+import { Moon, Sun } from 'lucide-react';
 
 export default function SettingsPage() {
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const { isDarkMode, toggleTheme } = useTheme();
   
   const [userData, setUserData] = useState({ fullName: '', email: '', avatar: '' });
   const [loading, setLoading] = useState(true);
@@ -134,32 +137,39 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0D14] font-sans text-slate-200 relative overflow-x-hidden">
+    <div className={`min-h-screen ${isDarkMode ? 'bg-[#0A0D14]' : 'bg-[#F8FAFC]'} font-sans text-slate-700 dark:text-slate-200 relative overflow-x-hidden animate-page-enter transition-colors duration-300`}>
       
       {/* Background Gradients & Grid */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
-        <div className="absolute top-0 left-0 right-0 h-[800px] bg-linear-to-br from-[#6B5AED]/20 via-[#6B5AED]/5 to-transparent blur-[130px]"></div>
-        <div className="absolute bottom-[-200px] right-[-100px] w-[800px] h-[800px] bg-[#6B5AED]/10 rounded-full blur-[150px]"></div>
+        <div className={`absolute inset-0 ${isDarkMode ? 'bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)]' : 'bg-[linear-gradient(rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.03)_1px,transparent_1px)]'} bg-[size:40px_40px]`}></div>
+        <div className={`absolute top-0 left-0 right-0 h-[800px] ${isDarkMode ? 'bg-linear-to-br from-[#6B5AED]/20 via-[#6B5AED]/5 to-transparent' : 'bg-linear-to-br from-[#6B5AED]/10 via-[#6B5AED]/5 to-transparent'} blur-[130px]`}></div>
       </div>
 
       {/* Header */}
-      <nav className="w-full h-20 border-b border-slate-800/60 bg-[#0A0D14]/50 backdrop-blur-2xl sticky top-0 z-50">
+      <nav className="w-full h-20 border-b border-slate-200 dark:border-slate-800/60 bg-white/70 dark:bg-[#0A0D14]/50 backdrop-blur-2xl sticky top-0 z-50 transition-colors">
         <div className="max-w-4xl mx-auto px-6 h-full flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button 
               onClick={() => navigate('/dashboard')}
-              className="p-2 hover:bg-[#1A1F2E] rounded-full transition-colors group"
+              className="p-2 hover:bg-slate-100 dark:hover:bg-[#1A1F2E] rounded-full transition-colors group"
             >
-              <ArrowLeft size={20} className="text-slate-400 group-hover:text-white" />
+              <ArrowLeft size={20} className="text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white" />
             </button>
-            <h1 className="text-xl font-bold text-white tracking-tight">Settings</h1>
+            <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Settings</h1>
           </div>
-          <div className="flex items-center gap-3">
-             <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
-               <Combine className="text-[#6B5AED]" size={18} />
+          <div className="flex items-center gap-4">
+             <button
+               onClick={toggleTheme}
+               className="p-2.5 bg-slate-100 dark:bg-[#121620] border border-slate-200 dark:border-slate-800 rounded-full text-slate-600 dark:text-slate-400 hover:text-[#6B5AED] transition-all cursor-pointer"
+             >
+               {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+             </button>
+             <div className="hidden sm:flex items-center gap-2">
+                <div className="w-8 h-8 bg-[#6B5AED] dark:bg-white rounded-lg flex items-center justify-center">
+                  <Combine className="text-white dark:text-[#6B5AED]" size={18} />
+                </div>
+                <span className="text-sm font-bold tracking-tighter text-slate-900 dark:text-white">QUICSPLIT</span>
              </div>
-             <span className="text-sm font-bold tracking-tighter">QUICSPLIT</span>
           </div>
         </div>
       </nav>
@@ -168,25 +178,25 @@ export default function SettingsPage() {
       <main className="max-w-4xl mx-auto px-6 py-10 relative z-10 space-y-8">
         
         {/* Profile Section */}
-        <section className="bg-[#1A1F2E]/40 backdrop-blur-md border border-slate-800/80 rounded-3xl p-8 shadow-xl">
+        <section className="bg-white dark:bg-[#1A1F2E]/40 backdrop-blur-md border border-slate-200 dark:border-slate-800/80 rounded-3xl p-8 shadow-xl transition-colors">
           <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 bg-[#6B5AED]/20 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-[#6B5AED]/10 dark:bg-[#6B5AED]/20 rounded-xl flex items-center justify-center">
               <User className="text-[#6B5AED]" size={20} />
             </div>
             <div>
-               <h2 className="text-lg font-semibold text-white">Profile Information</h2>
-               <p className="text-sm text-slate-400">Update your personal details and profile picture.</p>
+               <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Profile Information</h2>
+               <p className="text-sm text-slate-500 dark:text-slate-400">Update your personal details and profile picture.</p>
             </div>
           </div>
 
           <div className="flex flex-col md:flex-row gap-10 items-start">
             {/* Avatar Display */}
             <div className="relative group">
-              <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-[#6B5AED]/50 bg-[#0A0D14] flex items-center justify-center relative">
+              <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-slate-100 dark:border-[#6B5AED]/50 bg-slate-50 dark:bg-[#0A0D14] flex items-center justify-center relative">
                 {userData.avatar ? (
-                  <img src={userData.avatar} alt="https://i.pinimg.com/474x/40/d6/55/40d655b7022ce45320f3916c10a37e19.jpg" className="w-full h-full object-cover" />
+                  <img src={userData.avatar} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
-                  <User size={60} className="text-slate-700" />
+                  <User size={60} className="text-slate-300 dark:text-slate-700" />
                 )}
                 
                 {updating && (
@@ -234,22 +244,22 @@ export default function SettingsPage() {
                         type="text" 
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
-                        className="flex-1 bg-[#0A0D14] border border-[#6B5AED]/50 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-[#6B5AED]/20 transition-all"
+                        className="flex-1 bg-white dark:bg-[#0A0D14] border border-[#6B5AED]/50 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#6B5AED]/20 transition-all"
                         autoFocus
                       />
-                      <button onClick={handleNameUpdate} className="p-2.5 cursor-pointer bg-green-500/10 text-green-400 rounded-xl hover:bg-green-500/20 transition-colors">
+                      <button onClick={handleNameUpdate} className="p-2.5 cursor-pointer bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl hover:bg-emerald-500/20 transition-colors">
                         <Check size={20} />
                       </button>
-                      <button onClick={() => { setIsEditingName(false); setNewName(userData.fullName); }} className="p-2.5 cursor-pointer bg-red-500/10 text-red-400 rounded-xl hover:bg-red-500/20 transition-colors">
+                      <button onClick={() => { setIsEditingName(false); setNewName(userData.fullName); }} className="p-2.5 cursor-pointer bg-rose-500/10 text-rose-600 dark:text-rose-400 rounded-xl hover:bg-rose-500/20 transition-colors">
                         <X size={20} />
                       </button>
                     </div>
                   ) : (
-                    <div className="flex flex-1 items-center justify-between bg-[#0A0D14]/50 border border-slate-800 rounded-xl px-4 py-2.5 group">
-                      <span className="text-white font-medium">{userData.fullName}</span>
+                    <div className="flex flex-1 items-center justify-between bg-slate-50 dark:bg-[#0A0D14]/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5 group">
+                      <span className="text-slate-900 dark:text-white font-medium">{userData.fullName}</span>
                       <button 
                         onClick={() => setIsEditingName(true)}
-                        className="text-xs text-[#6B5AED] cursor-pointer hover:text-[#8879FF] font-semibold opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="text-xs text-[#6B5AED] cursor-pointer hover:text-[#8879FF] font-bold opacity-0 group-hover:opacity-100 transition-opacity"
                       >
                         Edit
                       </button>
@@ -260,24 +270,24 @@ export default function SettingsPage() {
 
               <div className="space-y-2">
                 <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">Email Address</label>
-                <div className="bg-[#0A0D14]/50 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 cursor-not-allowed">
+                <div className="bg-slate-100 dark:bg-[#0A0D14]/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5 text-slate-500 dark:text-slate-400 cursor-not-allowed">
                   {userData.email}
                 </div>
-                <p className="text-[10px] text-slate-600">Email address cannot be changed.</p>
+                <p className="text-[10px] text-slate-400 dark:text-slate-600">Email address cannot be changed.</p>
               </div>
             </div>
           </div>
         </section>
 
         {/* Security Section */}
-        <section className="bg-[#1A1F2E]/40 backdrop-blur-md border border-slate-800/80 rounded-3xl p-8 shadow-xl">
+        <section className="bg-white dark:bg-[#1A1F2E]/40 backdrop-blur-md border border-slate-200 dark:border-slate-800/80 rounded-3xl p-8 shadow-xl transition-colors">
           <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 bg-[#6B5AED]/20 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-[#6B5AED]/10 dark:bg-[#6B5AED]/20 rounded-xl flex items-center justify-center">
               <Lock className="text-[#6B5AED]" size={20} />
             </div>
             <div>
-               <h2 className="text-lg font-semibold text-white">Security</h2>
-               <p className="text-sm text-slate-400">Manage your password and account security.</p>
+               <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Security</h2>
+               <p className="text-sm text-slate-500 dark:text-slate-400">Manage your password and account security.</p>
             </div>
           </div>
 
@@ -294,7 +304,7 @@ export default function SettingsPage() {
                     type={showPass[field.id] ? "text" : "password"}
                     value={field.value}
                     onChange={(e) => setPasswords({...passwords, [field.id]: e.target.value})}
-                    className="w-full bg-[#0A0D14] border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#6B5AED]/50 focus:ring-2 focus:ring-[#6B5AED]/10 transition-all placeholder:text-slate-700"
+                    className="w-full bg-slate-50 dark:bg-[#0A0D14] border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-[#6B5AED] dark:focus:border-[#6B5AED]/50 focus:ring-2 focus:ring-[#6B5AED]/10 transition-all placeholder:text-slate-300 dark:placeholder:text-slate-700"
                     placeholder="••••••••"
                     required
                   />
