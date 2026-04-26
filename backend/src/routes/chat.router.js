@@ -2,7 +2,7 @@ import { Router } from "express";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import graph from "../ai/graphs.js";
 import { getSystemPrompt } from "../ai/prompt.js";
-import {Group} from "../models/group.model.js";
+import { Group } from "../models/group.model.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router = new Router();
@@ -23,11 +23,11 @@ router.post("/:groupId/chat", verifyJWT, async (req, res) => {
         ],
       },
       {
-        configurable: { 
+        configurable: {
           thread_id: threadId,
-          groupId: groupId,       
+          groupId: groupId,
           memberNames: memberNames
-         } // ← this is what maintains memoryyy
+        } // ← this is what maintains memoryyy
       }
     );
 

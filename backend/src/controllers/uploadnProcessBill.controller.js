@@ -1,7 +1,8 @@
 import File from "../models/file.model.js";
-import {Expense} from "../models/expense.model.js";
+import { Expense } from "../models/expense.model.js";
 import { Group } from "../models/group.model.js";
-import {Settlement} from "../models/settlement.model.js";
+import { Settlement } from "../models/settlement.model.js";
+import fuzzy from "fuzzysort"
 import asyncHandler from "../utils/asyncHandler.js"
 import apiResponse from "../utils/apiResponse.js"
 import apiError from "../utils/apiError.js"
@@ -9,7 +10,8 @@ import { getGroupBalances } from "./getBalances.controller.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { llm } from "../ai/llm.js";
 import { AIMessage, HumanMessage } from "@langchain/core/messages";
-import { getSystemPrompt } from "../ai/prompt.js";
+import { User } from "../models/user.model.js";
+import graph from "../ai/graphs.js";
 
 const uploadAndProcessBill = asyncHandler(async (req, res) => {
     const { groupId } = req.params;
@@ -20,6 +22,7 @@ const uploadAndProcessBill = asyncHandler(async (req, res) => {
     if (!group) {
         throw new apiError(404, "Group not found");
     }
+    const groupUsers = await User.find({ _id: { $in: group.members } }).select("fullName");
 
     //if member valid
     const isMember = group.members.some(
@@ -62,8 +65,8 @@ const uploadAndProcessBill = asyncHandler(async (req, res) => {
                         text: `You are a receipt scanner. Extract details from this receipt image.
                         When a bill is uploaded, scan it for who paid or search in the text prompt who paid. 
                         If you still dont get who paid, ONLY THEN assume that the user uploading the bill has paid it.
-                        ${prompt ? 
-                        `USER INSTRUCTION: 
+                        ${prompt ?
+                                `USER INSTRUCTION: 
                         ${prompt}` : ""}
                     Return ONLY a valid JSON object, no markdown, no explanation:
                     { 
@@ -84,7 +87,30 @@ const uploadAndProcessBill = asyncHandler(async (req, res) => {
         throw new apiError(500, "AI processing or JSON parsing failed: " + err.message);
     }
 
+    /** THIS IS WHAT FUZZY RETURNS US ON FUZZYSORT SEARCH
+     [
+       {
+         string: "Kushal",     // matched string
+         score: 0.02,         // how close the match is (lower = better)
+         obj: {               // 🔥 YOUR ORIGINAL OBJECT
+           _id: "abc123",
+           fullName: "Kushal"
+         }
+       },
+       {
+         string: "Kunal",
+         score: 0.3,
+         obj: { _id: "xyz456", fullName: "Kunal" }
+       }
+     ]
+     */
+
     const { expenseName, amount, description, ocrText, paidBy } = extractedData;
+
+    //Fuzzy match
+    const match = fuzzy.go(paidBy, groupUsers, { key: "fullName" })[0];
+    //Final user ID
+    const paidByUserId = match?.obj?._id || userId;
 
     const finalAmount = parseFloat(amount);
 
@@ -98,7 +124,7 @@ const uploadAndProcessBill = asyncHandler(async (req, res) => {
         ocrText: ocrText,
         extractedAmount: finalAmount,
         extractedTitle: expenseName,
-        paidBy
+        paidBy: paidByUserId,
     });
 
     //Split among members
@@ -114,7 +140,7 @@ const uploadAndProcessBill = asyncHandler(async (req, res) => {
     const expense = await Expense.create({
         expenseName: expenseName,
         group: groupId,
-        paidBy: userId,
+        paidBy: paidByUserId,
         amount: amount,
         description: description,
         file: uploadedBill._id,
@@ -134,33 +160,45 @@ const uploadAndProcessBill = asyncHandler(async (req, res) => {
 });
 
 const chatWithAI = asyncHandler(async (req, res) => {
-  const { groupId } = req.params;
-  const { messages } = req.body;  // full history from frontend
-  const userId = req.user._id;
+    const { groupId } = req.params;
+    const { messages } = req.body;  // full history from frontend
+    const userId = req.user._id;
 
-  // get group members for system prompt
-  const group = await Group.findById(groupId).populate("members", "fullName");
-  if (!group) throw new apiError(404, "Group not found");
+    // get group members for system prompt
+    const group = await Group.findById(groupId).populate("members", "fullName");
+    if (!group) throw new apiError(404, "Group not found");
 
-  const memberNames = group.members.map(m => m.fullName);
+    const memberNames = group.members.map(m => m.fullName);
 
-  // format history for Gemini
-  const formattedMessages = messages.map(msg =>
-    msg.role === "user"
-      ? new HumanMessage(msg.content)
-      : new AIMessage(msg.content)
-  );
+    // format history for Gemini
+    const formattedMessages = messages.map(msg =>
+        msg.role === "user"
+            ? new HumanMessage(msg.content)
+            : new AIMessage(msg.content)
+    );
 
-  const result = await llm.invoke([
-    getSystemPrompt(groupId, memberNames),  // your prompt.js
-    ...formattedMessages  // full chat history
-  ]);
+    // Use the LangGraph instead of direct LLM call
+    const result = await graph.invoke(
+        {
+            messages: formattedMessages,
+        },
+        {
+            configurable: {
+                thread_id: req.body.threadId || groupId, // Maintain memory via threadId
+                groupId: groupId,
+                memberNames: memberNames
+            }
+        }
+    );
 
-  res.status(200).json(new apiResponse(
-    { reply: result.content },
-    200,
-    "AI response"
-  ));
+    // Extract the final message content from the graph state
+    const reply = result.messages.at(-1).content;
+
+    res.status(200).json(new apiResponse(
+        { reply },
+        200,
+        "AI response"
+    ));
 });
 
 
@@ -225,7 +263,7 @@ const deleteExpense = asyncHandler(async (req, res) => {
 const createSettlement = asyncHandler(async (req, res) => {
     const { groupId } = req.params
     const { from, to, amount, note } = req.body;
-    const userId= req.user?._id
+    const userId = req.user?._id
 
     const group = await Group.findById(groupId);
     if (!group) throw new apiError(404, "Group not found");

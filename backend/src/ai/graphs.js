@@ -5,13 +5,14 @@ import {
   getExpensesTool, 
   createExpenseTool, 
   calculateGroupBalancesTool, 
-  reduceXinYTool,
+  recordSettlement,
   deleteExpenseTool
 } from "./tools.js";
 import { getSystemPrompt } from "./prompt.js";
 
-const tools = [getExpensesTool, createExpenseTool, calculateGroupBalancesTool, reduceXinYTool, deleteExpenseTool];
+const tools = [getExpensesTool, createExpenseTool, calculateGroupBalancesTool, recordSettlement, deleteExpenseTool];
 const llmWithTools = llm.bindTools(tools);
+//This sends the "signatures" (names and descriptions) of your functions in tools.js to Gemini.
 
 // Node 1 — call the LLM
 async function callLLM(state, config) {
@@ -45,8 +46,8 @@ async function runTool(state) {
     if (toolCall.name === "getAccountBalancesNSettle") {
       results.push(await calculateGroupBalancesTool.invoke(toolCall.args));
     }
-    if (toolCall.name === "transaction_n_settlement") {
-      results.push(await reduceXinYTool.invoke(toolCall.args));
+    if (toolCall.name === "recordSettlement") {
+      results.push(await recordSettlement.invoke(toolCall.args));
     }
     if (toolCall.name === "deleteExpense") {
       results.push(await deleteExpenseTool.invoke(toolCall.args));

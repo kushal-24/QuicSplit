@@ -4,7 +4,7 @@ import {Expense} from "../models/expense.model.js";
 import {Settlement} from "../models/settlement.model.js";
 import {Group} from "../models/group.model.js"
 import { User } from "../models/user.model.js";
-import fuzzy from "fuzzysort"
+import fuzzy from "fuzzysort";
 
 const getExpensesTool = tool(async ({ groupId }) => {
   const expenses = await Expense.find({ groupId: groupId });
@@ -16,161 +16,181 @@ const getExpensesTool = tool(async ({ groupId }) => {
 });
 
 const createExpenseTool = tool(async ({ groupId, amt, paidBy, ppl, name }) => {
-  const len = ppl.length;
-  const sharedAmt= amt/len;
+  const group = await Group.findById(groupId);
+  if (!group) return "Group not found";
 
+  const groupUsers = await User.find({ _id: { $in: group.members } }).select("fullName _id");
+
+  // Verify who paid
   const paidByResult = fuzzy.go(paidBy, groupUsers, { key: "fullName" });
   const paidByUser = paidByResult[0]?.obj;
   if (!paidByUser) return `${paidBy} is not a member of this group`;
 
-  const group= await Group.findById(groupId);
-  const groupUsers = await User.find({ _id: { $in: group.members } }).select("fullName _id");
+  const sharedAmt = amt / ppl.length;
+  const participants = [];
 
-  const participants=[];
-  for(const p of ppl){
-    const nameResult= fuzzy.go(p, groupUsers, {key: "fullName"});
+  for (const p of ppl) {
+    const nameResult = fuzzy.go(p, groupUsers, { key: "fullName" });
     const matched = nameResult[0]?.obj;
 
     if (!matched) {
-      return `${name} is not a member of this group`;
+      return `Member "${p}" not found in this group.`;
     }
-    participants.push({user: matched._id, share: sharedAmt })
+    participants.push({ user: matched._id, share: sharedAmt });
   }
+
   const exp = await Expense.create({
     group: groupId,
-    paidBy: paidBy,
+    paidBy: paidByUser._id,
     amount: amt,
-    name: name,
+    expenseName: name,
     participants: participants
-  })
+  });
 
-  return `Expense of ₹${amt} created, split among ${ppl.join(", ")}`;
+  return `Expense "${name}" of ₹${amt} created successfully. Paid by ${paidByUser.fullName} and split among ${ppl.join(", ")}.`;
 },
   {
     name: "createExpense",
-    description: "Create an expense whenever a bill is scanned ",
+    description: "Create an expense for a group. Provide the total amount, who paid, the participants, and a name for the expense.",
     schema: z.object({
       groupId: z.string(),
-      amt: z.number(),
-      paidBy: z.string(),
-      ppl: z.array(z.string()),
-      name: z.string()
+      amt: z.number().describe("Total amount of the expense"),
+      paidBy: z.string().describe("Name of the person who paid the bill"),
+      ppl: z.array(z.string()).describe("List of member names who shared this expense"),
+      name: z.string().describe("What was this expense for? (e.g. 'Dinner', 'Tacos')")
     })
-})
+  });
+//WORKING
 
-const calculateGroupBalancesTool = tool(async ({groupId}) => {
-  const group = await Group.findById(groupId);
+const calculateGroupBalancesTool = tool(async ({ groupId }) => {
+  const group = await Group.findById(groupId).populate("members", "fullName");
+  if (!group) return "Group not found";
+
+  const idToName = {};
+  group.members.forEach(member => {
+    idToName[member._id.toString()] = member.fullName;
+  });
 
   const expenses = await Expense.find({ group: groupId });
   const settlements = await Settlement.find({ group: groupId });
 
   const balances = {};
   group.members.forEach(member => {
-    balances[member.toString()] = 0;
+    balances[member._id.toString()] = 0;
   });
 
   expenses.forEach(exp => {
     const paidBy = exp.paidBy.toString();
-
     exp.participants.forEach(p => {
       const user = p.user.toString();
       const share = p.share;
 
       if (user === paidBy) {
-        balances[user] += (exp.amount - share); //usne hi pay kia hai toh uska '+' me rakho
+        balances[user] += (exp.amount - share);
       } else {
         balances[user] -= share;
       }
-    })
-  })
-  
-  settlements.forEach(s=>{
-    const from= s.from.toString();
-    const to=s.to.toString();
-    const amount= s.amount;
+    });
+  });
 
-    balances[from] +=amount;
-    balances[to] -=amount;
-  })
+  settlements.forEach(s => {
+    const from = s.from.toString();
+    const to = s.to.toString();
+    const amount = s.amount;
 
-  //Convert balances → transactions
+    balances[from] += amount;
+    balances[to] -= amount;
+  });
+
   const creditors = [];
   const debtors = [];
 
   for (let user in balances) {
-    if (balances[user] > 0) {
+    if (balances[user] > 0.01) { // Ignore tiny rounding errors
       creditors.push({ user, amount: balances[user] });
-    } else if (balances[user] < 0) {
+    } else if (balances[user] < -0.01) {
       debtors.push({ user, amount: -balances[user] });
     }
   }
 
   const transactions = [];
-
   let i = 0, j = 0;
 
   while (i < debtors.length && j < creditors.length) {
     const debt = debtors[i];
     const credit = creditors[j];
-
     const settleAmount = Math.min(debt.amount, credit.amount);
 
     transactions.push({
-      from: debt.user,
-      to: credit.user,
-      amount: settleAmount
+      from: idToName[debt.user] || debt.user,
+      to: idToName[credit.user] || credit.user,
+      amount: settleAmount.toFixed(2)
     });
 
     debt.amount -= settleAmount;
     credit.amount -= settleAmount;
 
-    if (debt.amount === 0) i++;
-    if (credit.amount === 0) j++;
+    if (debt.amount < 0.01) i++;
+    if (credit.amount < 0.01) j++;
   }
-  return JSON.stringify({balances, transactions});
-},
-{
+
+  const humanReadableBalances = {};
+  for (let id in balances) {
+    humanReadableBalances[idToName[id] || id] = balances[id].toFixed(2); //format it to 2 decimal places (as a string).
+  }
+
+  return JSON.stringify({
+    message: "Here are the net settlements needed to clear all debts:",
+    suggestedTransactions: transactions,
+    netBalances: humanReadableBalances
+  });
+}, {
   name: "getAccountBalancesNSettle",
-  description: `calculate what are the balances of every participant in the expenses of the grp, and calculates net 
-  credit to be recieved or dept to be paid back`,
+  description: "Calculate what are the balances of every participant and suggest net transactions to settle up.",
   schema: z.object({ groupId: z.string() })
-})
+});
+//WORKING
 
-const reduceXinYTool= tool(async({groupId, amt, name1, name2})=>{
-  const group= await Group.findById(groupId);
+const recordSettlement = tool(async ({ groupId, amt, fromUser, toUser }) => {
+  const group = await Group.findById(groupId);
+  if (!group) return "Group not found";
+
   const users = await User.find({ _id: { $in: group.members } }).select("fullName _id");
-  //esse we get all the members of that group in the variable USERS
 
-  const fromResult = fuzzy.go(name1, users, { key: "fullName" });
-  const toResult = fuzzy.go(name2, users, { key: "fullName" });
-  
-  const y = fromResult[0]?.obj;
-  const z = toResult[0]?.obj;
+  const fromResult = fuzzy.go(fromUser, users, { key: "fullName" });
+  const toResult = fuzzy.go(toUser, users, { key: "fullName" });
 
-  if(!y || !z){
-    return "No user has been found"
+  const sender = fromResult[0]?.obj;
+  const receiver = toResult[0]?.obj;
+
+  if (!sender || !receiver) {
+    return `Could not find users. Make sure both ${fromUser} and ${toUser} are in the group.`;
   }
 
-  await  Settlement.create({
+  await Settlement.create({
     group: groupId,
-    from: y._id,
-    to: z._id,
+    from: sender._id,
+    to: receiver._id,
     amount: amt,
-    note: "",
+    note: "Settled via AI chat",
     status: "completed"
   });
-  await calculateGroupBalancesTool(groupId);
-  //groupId, amt, name1, name2
-},{
-  name: "transaction_n_settlement",
-  description: "Create a settlement whenever we have to perform a transaction and then call the calculateGroupBalances() tool",
-  schema: z.object({ 
+
+  // Re-calculate balances so the AI knows the new state
+  const updatedBalances = await calculateGroupBalancesTool.invoke({ groupId });
+
+  return `Successfully recorded payment: ${sender.fullName} paid ₹${amt} to ${receiver.fullName}. New status: ${updatedBalances}`;
+}, {
+  name: "recordSettlement",
+  description: "Record a payment or settlement between two members of a group.",
+  schema: z.object({
     groupId: z.string(),
-    amt: z.number(),
-    name1: z.string(),
-    name2: z.string()
+    amt: z.number().describe("The amount being paid"),
+    fromUser: z.string().describe("The name of the person paying money"),
+    toUser: z.string().describe("The name of the person receiving money")
   })
-})
+});
+//WORKING
 
 const deleteExpenseTool = tool(async ({ groupId, expName }) => {
 
@@ -199,12 +219,13 @@ const deleteExpenseTool = tool(async ({ groupId, expName }) => {
     })
   }
 );
+//WORKING
 
 export {
   getExpensesTool,
   createExpenseTool,
   calculateGroupBalancesTool,
-  reduceXinYTool,
+  recordSettlement,
   deleteExpenseTool,
 }
 

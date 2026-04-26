@@ -196,7 +196,6 @@ const getGroup = asyncHandler(async (req, res) => {
         {$group: {_id: null, total: {$sum: "$amount"}}}
       ])
       const totalSpent = totalExpenses[0]?.total || 0
-      console.log("TOTAL SPENT", totalSpent);
 
   return res.status(200).json(
     new apiResponse(
