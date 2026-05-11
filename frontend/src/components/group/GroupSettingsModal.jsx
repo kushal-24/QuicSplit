@@ -151,7 +151,7 @@ export default function GroupSettingsModal({ isOpen, onClose, groupData, onUpdat
                 <div className="relative group">
                   <div className="w-24 h-24 rounded-2xl bg-slate-800 border-2 border-dashed border-slate-700 flex items-center justify-center overflow-hidden">
                     {thumbnailPreview ? (
-                      <img src={thumbnailPreview} alt="Preview" className="w-full h-full object-cover" />
+                      <img src={thumbnailPreview.startsWith('blob:') ? thumbnailPreview : thumbnailPreview.replace('http://', 'https://')} alt="Preview" className="w-full h-full object-cover" />
                     ) : (
                       <Camera className="text-slate-500" size={32} />
                     )}

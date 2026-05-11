@@ -77,7 +77,7 @@ export default function DashBoard() {
               className="flex cursor-pointer items-center gap-3 hover:bg-slate-100 dark:hover:bg-[#1A1F2E] p-1.5 pr-4 rounded-full border border-slate-200 dark:border-slate-800 transition-all active:scale-95 bg-white dark:bg-[#121620]"
             >
               <img 
-                src={user?.avatar || pfp} 
+                src={user?.avatar?.replace('http://', 'https://') || pfp}
                 alt="Profile" 
                 className="w-9 h-9 rounded-full object-cover border-[1.5px] border-[#6B5AED]"
               />
@@ -165,7 +165,7 @@ export default function DashBoard() {
                   <div className="flex items-center gap-4">
                     <div className="w-14 h-14 rounded-2xl bg-slate-800/50 flex items-center justify-center text-3xl group-hover:bg-[#6B5AED]/20 group-hover:scale-105 transition-all">
                       <div style={{ background: color, borderRadius: 8, width: 48, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 500, color: '#fff' }}>
-                        {group.thumbnail ? <img className='w-full h-full rounded-xl object-cover' src={group.thumbnail} alt="G" /> : group.name[0].toUpperCase()}
+                        {group.thumbnail ? <img className='w-full h-full rounded-xl object-cover' src={group.thumbnail.replace('http://', 'https://')} alt="G" /> : group.name[0].toUpperCase()}
                       </div>  
                     </div>
                     <div>
@@ -205,7 +205,7 @@ export default function DashBoard() {
                     {group.members?.slice(0, 3).map((member, idx) => (
                       <img 
                         key={idx} 
-                        src={member?.avatar || pfp} 
+                        src={member?.avatar?.replace('http://', 'https://') || pfp}
                         className="w-9 h-9 rounded-full border-2 border-[#1A1F2E] object-cover hover:z-10 hover:scale-110 transition-transform" 
                         alt="Member avatar"
                       />

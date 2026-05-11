@@ -183,7 +183,7 @@ export default function AiChat({ groupId, onFetchGroupData }) {
               : 'bg-[#1A1F2E] border border-slate-700/50 text-slate-200 rounded-2xl rounded-tl-sm shadow-sm'
               }`}>
               {msg.file && typeof msg.file === 'string' && ( //checking if file is a picture
-                <img src={msg.file} alt="attached" className="max-w-[150px] sm:max-w-[200px] rounded-lg mb-2 opacity-90" />
+                <img src={msg.file.replace('http://', 'https://')} alt="attached" className="max-w-[150px] sm:max-w-[200px] rounded-lg mb-2 opacity-90" />
               )}
               {msg.file && typeof msg.file !== 'string' && ( //display props change if file type is not a photo...some pdf or smth
                 <div className="flex items-center gap-2 bg-black/20 p-2 rounded-lg mb-2">

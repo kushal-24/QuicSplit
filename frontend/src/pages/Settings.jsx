@@ -194,7 +194,7 @@ export default function SettingsPage() {
             <div className="relative group">
               <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-slate-100 dark:border-[#6B5AED]/50 bg-slate-50 dark:bg-[#0A0D14] flex items-center justify-center relative">
                 {userData.avatar ? (
-                  <img src={userData.avatar} alt="Profile" className="w-full h-full object-cover" />
+                  <img src={userData.avatar.replace('http://', 'https://')} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
                   <User size={60} className="text-slate-300 dark:text-slate-700" />
                 )}
