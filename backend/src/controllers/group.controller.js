@@ -107,7 +107,7 @@ const createGroup = asyncHandler(async (req, res) => {
   let img = null;
   if (thumbnailLocalPath) {
     const response = await uploadOnCloudinary(thumbnailLocalPath);
-    img = response?.url;
+    img = response?.secure_url;
   }
 
   if (!grpName) {
