@@ -29,6 +29,10 @@ const userSchema = new Schema({
         type: String, // Cloudinary URL
         default: "https://i.pinimg.com/474x/40/d6/55/40d655b7022ce45320f3916c10a37e19.jpg",
     },
+    lastClearedLogsAt: {
+        type: Date,
+        default: null
+    } //Added during create Logs
 }, { timestamps: true })
 
 userSchema.pre("save", async function () {

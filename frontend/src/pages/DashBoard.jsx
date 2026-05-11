@@ -7,7 +7,8 @@ import { useAuth } from '../Context/Auth.Context';
 import { useTheme } from '../Context/Theme.Context';
 import pfp from "../assets/pfp.jpg";
 import { GroupSkeleton } from '../components/common/LoadingStates';
-import { Moon, Sun } from 'lucide-react';
+import { Moon, Sun, Activity } from 'lucide-react';
+import ActivityLogsModal from '../components/dashboard/ActivityLogsModal';
 
 export default function DashBoard() {
   const navigate= useNavigate();
@@ -15,6 +16,7 @@ export default function DashBoard() {
   const { isDarkMode, toggleTheme } = useTheme();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
+  const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
   const [groups, setGroups] = useState([]); 
   const [isLoading, setIsLoading] = useState(true);
   
@@ -64,12 +66,12 @@ export default function DashBoard() {
 
           {/* Right: Actions */}
           <div className="flex items-center gap-3 relative">
-            <button
+            {/* <button
               onClick={toggleTheme}
               className="p-2.5 bg-slate-100 dark:bg-[#121620] border border-slate-200 dark:border-slate-800 rounded-full text-slate-600 dark:text-slate-400 hover:text-[#6B5AED] transition-all cursor-pointer"
             >
               {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
+            </button> */}
             <button 
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="flex cursor-pointer items-center gap-3 hover:bg-slate-100 dark:hover:bg-[#1A1F2E] p-1.5 pr-4 rounded-full border border-slate-200 dark:border-slate-800 transition-all active:scale-95 bg-white dark:bg-[#121620]"
@@ -85,7 +87,7 @@ export default function DashBoard() {
 
             {/* Dropdown Menu */}
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-3 w-52 bg-white dark:bg-[#1A1F2E] border border-slate-200 dark:border-slate-700/50 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="absolute right-0 top-full mt-2 w-52 max-w-[calc(100vw-2rem)] bg-white dark:bg-[#1A1F2E] border border-slate-200 dark:border-slate-700/50 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200 overflow-hidden">
                 <div className="px-4 py-2 border-b border-slate-100 dark:border-slate-800 sm:hidden">
                    <p className="text-sm font-medium text-slate-900 dark:text-white">{user?.fullName || "Sarah Connor"}</p>
                    <p className="text-xs text-slate-400 dark:text-slate-500">{user?.email || "sarah@example.com"}</p>
@@ -120,13 +122,22 @@ export default function DashBoard() {
             <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm">Manage expenses and track shared balances.</p>
           </div>
           
-          <button 
-            onClick={() => setIsGroupModalOpen(true)}
-            className="bg-[#6B5AED] cursor-pointer hover:bg-[#5a4add] text-white px-5 py-3 rounded-xl flex items-center justify-center gap-2 font-medium transition-all shadow-[0_4px_12px_rgba(107,90,237,0.3)] hover:shadow-[0_6px_16px_rgba(107,90,237,0.4)] active:scale-95"
-          >
-            <Plus size={20} />
-            Create Group
-          </button>
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => setIsActivityModalOpen(true)}
+              className="bg-white dark:bg-[#1A1F2E] cursor-pointer hover:bg-slate-50 dark:hover:bg-[#252b40] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800/80 px-4 py-3 rounded-xl flex items-center justify-center gap-2 font-medium transition-all shadow-sm active:scale-95"
+            >
+              <Activity size={20} className="text-[#6B5AED]" />
+              <span className="hidden sm:inline">Activity Logs</span>
+            </button>
+            <button 
+              onClick={() => setIsGroupModalOpen(true)}
+              className="bg-[#6B5AED] cursor-pointer hover:bg-[#5a4add] text-white px-5 py-3 rounded-xl flex items-center justify-center gap-2 font-medium transition-all shadow-[0_4px_12px_rgba(107,90,237,0.3)] hover:shadow-[0_6px_16px_rgba(107,90,237,0.4)] active:scale-95"
+            >
+              <Plus size={20} />
+              Create Group
+            </button>
+          </div>
         </div>
 
         {/* Groups Grid */}
@@ -140,7 +151,8 @@ export default function DashBoard() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {groups?.map((group, index) => {
               const color = colors[group.name.charCodeAt(0) % colors.length]
-              const balanceRounded= group.myBalance.toFixed(2)
+              const balanceRounded= group.myBalance.toFixed(2);
+
               return(
               <div 
                 key={group._id} 
@@ -153,7 +165,7 @@ export default function DashBoard() {
                   <div className="flex items-center gap-4">
                     <div className="w-14 h-14 rounded-2xl bg-slate-800/50 flex items-center justify-center text-3xl group-hover:bg-[#6B5AED]/20 group-hover:scale-105 transition-all">
                       <div style={{ background: color, borderRadius: 8, width: 48, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 500, color: '#fff' }}>
-                        {group.name[0].toUpperCase()}
+                        {group.thumbnail ? <img className='w-full h-full rounded-xl object-cover' src={group.thumbnail} alt="G" /> : group.name[0].toUpperCase()}
                       </div>  
                     </div>
                     <div>
@@ -188,7 +200,7 @@ export default function DashBoard() {
                 </div>
 
                 {/* Card Footer: Avatars */}
-                <div className="mt-auto flex items-center justify-between pt-5 border-t border-slate-100 dark:border-slate-800/50">
+                {/* <div className="mt-auto flex items-center justify-between pt-5 border-t border-slate-100 dark:border-slate-800/50">
                    <div className="flex -space-x-3 hover:space-x-0 transition-all duration-300">
                     {group.members?.slice(0, 3).map((member, idx) => (
                       <img 
@@ -207,7 +219,7 @@ export default function DashBoard() {
                   <button className="text-sm cursor-pointer font-medium text-[#6B5AED] group-hover:text-[#8879FF] transition-colors flex items-center gap-1">
                     Details <span className="opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all">→</span>
                   </button>
-                </div>
+                </div> */}
               </div>
             )})}
           </div>
@@ -250,6 +262,12 @@ export default function DashBoard() {
           }}
         />
       )}
+
+      {/* Activity Logs Modal */}
+      <ActivityLogsModal 
+        isOpen={isActivityModalOpen} 
+        onClose={() => setIsActivityModalOpen(false)} 
+      />
     </div>
   );
 }

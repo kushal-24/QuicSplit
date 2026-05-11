@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { HumanMessage, SystemMessage } from "@langchain/core/messages";
+import { webcrypto } from "crypto"
+globalThis.crypto = webcrypto
+import { HumanMessage } from "@langchain/core/messages";
 import graph from "../ai/graphs.js";
-import { getSystemPrompt } from "../ai/prompt.js";
 import { Group } from "../models/group.model.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 

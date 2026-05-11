@@ -8,8 +8,10 @@ import GroupSettingsModal from '../components/group/GroupSettingsModal';
 import { Settings as SettingsIcon, Moon, Sun } from 'lucide-react';
 import { PremiumLoader } from '../components/common/LoadingStates';
 import { useTheme } from '../Context/Theme.Context';
+import { useNavigate } from 'react-router-dom';
 
 export default function Group2({groupId, expenses, totalSpent, transactions, balances, loading, onFetchGroupData, groupData}) {
+  const navigate = useNavigate();
   const { isDarkMode, toggleTheme } = useTheme();
 
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);

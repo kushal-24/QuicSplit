@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Settings as SettingsIcon, Moon, Sun } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../Context/Theme.Context';
 import GroupSettingsModal from '../components/group/GroupSettingsModal';
 import StatCards from '../components/group/StatCards';
@@ -10,6 +11,7 @@ import { useAuth } from '../Context/Auth.Context';
 import { createSettlement } from '../Api/group.api';
 
 export default function Group({groupId,expenses,transactions,balances,loading, onFetchGroupData, groupData, totalSpent}) {
+  const navigate = useNavigate();
   const { isDarkMode, toggleTheme } = useTheme();
   const [activeTab, setActiveTab] = useState('expenses');
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
@@ -51,7 +53,7 @@ export default function Group({groupId,expenses,transactions,balances,loading, o
             {/* Top Row: Navigation and Members */}
             <div className="flex items-center justify-between">
               <button 
-                onClick={() => window.history.back()}
+                onClick={() => navigate('/dashboard')}
                 className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-[#6B5AED] dark:hover:text-slate-200 transition-colors cursor-pointer"
               >
                 <ArrowLeft size={18} />

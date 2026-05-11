@@ -9,9 +9,12 @@ import apiError from "../utils/apiError.js"
 import { getGroupBalances } from "./getBalances.controller.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { llm } from "../ai/llm.js";
+import { webcrypto } from "crypto"
+globalThis.crypto = webcrypto
 import { AIMessage, HumanMessage } from "@langchain/core/messages";
 import { User } from "../models/user.model.js";
 import graph from "../ai/graphs.js";
+import { logActivity } from "../utils/activityLogger.js";
 
 const uploadAndProcessBill = asyncHandler(async (req, res) => {
     const { groupId } = req.params;
@@ -147,6 +150,13 @@ const uploadAndProcessBill = asyncHandler(async (req, res) => {
         participants: participants
     });
 
+    await logActivity({
+        groupId: groupId,
+        action: "EXPENSE_CREATED",
+        description: `Receipt scanned: "${expenseName}" of ₹${Math.round(amount)} was added.`,
+        relatedUsers: group.members
+    });
+
     return res.status(201).json(
         new apiResponse(
             {
@@ -228,6 +238,14 @@ const createExpense = asyncHandler(async (req, res) => {
 
     if (!newExpense) throw new apiError(404, "Server request failed to create newExpense");
 
+    const group = await Group.findById(groupId);
+    await logActivity({
+        groupId: groupId,
+        action: "EXPENSE_CREATED",
+        description: `Expense "${name}" of ₹${Math.round(amt)} was created.`,
+        relatedUsers: group?.members || []
+    });
+
     const result = await getGroupBalances(groupId);
 
     return res
@@ -244,7 +262,18 @@ const deleteExpense = asyncHandler(async (req, res) => {
     const { groupId } = req.params;
     const { expId } = req.params;
 
-    await Expense.findByIdAndDelete(expId);
+    const tobedeleted = await Expense.findByIdAndDelete(expId);
+    
+    const group = await Group.findById(groupId);
+    if (tobedeleted) {
+        await logActivity({
+            groupId: groupId,
+            action: "EXPENSE_DELETED",
+            description: `Expense "${tobedeleted.expenseName}" was deleted.`,
+            relatedUsers: group?.members || []
+        });
+    }
+
     const result = await getGroupBalancesInternal(groupId);
 
     return res.status(200).json(
@@ -274,6 +303,14 @@ const createSettlement = asyncHandler(async (req, res) => {
         to,
         amount,
         note
+    });
+
+    const fromUserDoc = await User.findById(from);
+    await logActivity({
+        groupId: groupId,
+        action: "SETTLEMENT_CREATED",
+        description: `${fromUserDoc?.fullName || 'A user'} paid ₹${Math.round(amount)}.`,
+        relatedUsers: [from, to]
     });
 
     const result = await getGroupBalances(groupId, userId);

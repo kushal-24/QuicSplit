@@ -74,12 +74,12 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-[rgb(244,247,254)] dark:bg-[#0A0D14] font-sans p-4 transition-colors duration-500 relative animate-page-enter">
       {/* Theme Toggle Button */}
       <div className="absolute top-6 right-6 lg:top-8 lg:right-8 z-50">
-        <button
+        {/* <button
           onClick={toggleTheme}
           className="p-3 bg-white/50 dark:bg-[#1A1F2E]/50 backdrop-blur-md border border-slate-200 dark:border-slate-800 rounded-full shadow-sm hover:scale-105 active:scale-95 transition-all text-slate-800 dark:text-white cursor-pointer"
           aria-label="Toggle theme">
           {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-        </button>
+        </button> */}
       </div>
 
       <div className="w-full max-w-[480px] bg-white dark:bg-[#1A1F2E] rounded-4xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] p-6 md:p-8 transition-all duration-500 relative overflow-hidden">
@@ -165,7 +165,7 @@ export default function Login() {
           <div className="space-y-1">
             <div className="flex justify-between items-center">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Password</label>
-              {isLogin && <a href="#" className="text-sm text-[#6B5AED] dark:text-[#8879FF] hover:underline font-medium">Forgot password?</a>}
+              {/* {isLogin && <a href="#" className="text-sm text-[#6B5AED] dark:text-[#8879FF] hover:underline font-medium">Forgot password?</a>} */}
             </div>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

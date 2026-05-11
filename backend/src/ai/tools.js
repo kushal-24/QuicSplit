@@ -2,9 +2,10 @@ import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 import {Expense} from "../models/expense.model.js";
 import {Settlement} from "../models/settlement.model.js";
-import {Group} from "../models/group.model.js"
+import { Group } from "../models/group.model.js"
 import { User } from "../models/user.model.js";
 import fuzzy from "fuzzysort";
+import { logActivity } from "../utils/activityLogger.js";
 
 const getExpensesTool = tool(async ({ groupId }) => {
   const expenses = await Expense.find({ groupId: groupId });
@@ -47,7 +48,14 @@ const createExpenseTool = tool(async ({ groupId, amt, paidBy, ppl, name }) => {
     participants: participants
   });
 
-  return `Expense "${name}" of ₹${amt} created successfully. Paid by ${paidByUser.fullName} and split among ${ppl.join(", ")}.`;
+  await logActivity({
+    groupId: groupId,
+    action: "EXPENSE_CREATED",
+    description: `Expense "${name}" of ₹${Math.round(amt)} was created via AI.`,
+    relatedUsers: group.members
+  });
+
+  return `Expense "${name}" of ₹${Math.round(amt)} created successfully. Paid by ${paidByUser.fullName} and split among ${ppl.join(", ")}.`;
 },
   {
     name: "createExpense",
@@ -176,6 +184,13 @@ const recordSettlement = tool(async ({ groupId, amt, fromUser, toUser }) => {
     status: "completed"
   });
 
+  await logActivity({
+    groupId: groupId,
+    action: "SETTLEMENT_CREATED",
+    description: `${sender.fullName} paid ₹${Math.round(amt)} to ${receiver.fullName} via AI.`,
+    relatedUsers: [sender._id, receiver._id]
+  });
+
   // Re-calculate balances so the AI knows the new state
   const updatedBalances = await calculateGroupBalancesTool.invoke({ groupId });
 
@@ -207,6 +222,13 @@ const deleteExpenseTool = tool(async ({ groupId, expName }) => {
     }
 
     await Expense.findByIdAndDelete(tobedelexp._id);
+
+    await logActivity({
+      groupId: groupId,
+      action: "EXPENSE_DELETED",
+      description: `Expense "${tobedelexp.expenseName}" was deleted via AI.`,
+      relatedUsers: group.members
+    });
 
     return `Expense "${tobedelexp.name}" deleted successfully`;
   },

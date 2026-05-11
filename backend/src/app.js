@@ -24,10 +24,12 @@ app.use(cookieParser());
 import userRouter from "./routes/user.router.js"
 import groupRouter from "./routes/group.router.js"
 import chatRouter from "./routes/chat.router.js"
+import activityRouter from "./routes/activity.router.js"
 
 
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/group', groupRouter);
 app.use('/api/v1/group', chatRouter);
+app.use('/api/v1/activity', activityRouter);
 
 export {app}

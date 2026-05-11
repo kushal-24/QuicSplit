@@ -48,7 +48,7 @@ const InvalidRoute = () => {
             hover:shadow-cyan-500/30"
         >
           <Home className="w-4 h-4" />
-          Go to Boards
+          Head back?
         </button>
       </div>
 

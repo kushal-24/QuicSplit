@@ -2,9 +2,11 @@ import asyncHandler from "../utils/asyncHandler.js";
 import apiError from "../utils/apiError.js";
 import apiResponse from "../utils/apiResponse.js";
 import {Group} from "../models/group.model.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js";
 import { getGroupBalances } from "./getBalances.controller.js";
 import { Expense } from "../models/expense.model.js";
+import { logActivity } from "../utils/activityLogger.js";
+import { User } from "../models/user.model.js";
 
 //ADD AND REMOVE MEMBERS
 
@@ -25,6 +27,15 @@ const addMember= asyncHandler(async(req,res)=>{
 
     await group.save();
 
+    const addedUser = await User.findById(a);
+
+    await logActivity({
+        groupId: group._id,
+        action: "MEMBER_ADDED",
+        description: `${addedUser?.fullName || 'A new user'} was added to the group.`,
+        relatedUsers: group.members
+    });
+
     return res
     .status(200)
     .json( 
@@ -38,12 +49,22 @@ const addMember= asyncHandler(async(req,res)=>{
 
 const removeMember = asyncHandler(async (req, res) => {
     const { groupId } = req.params;
-    const { a } = req.body;
+    const { a } = req.body; // userId to remove
   
     const group = await Group.findById(groupId);
   
     if (!group) {
       throw new apiError(404, "Group not found");
+    }
+
+    // Ownership check
+    if (group.ownerId.toString() !== req.user._id.toString()) {
+      throw new apiError(403, "Only the owner can remove members");
+    }
+
+    // Prevent owner from removing themselves
+    if (a.toString() === group.ownerId.toString()) {
+      throw new apiError(403, "Owner cannot be removed from the group");
     }
 
     const isMember = group.members?.some((memberId) => memberId.toString() === a.toString());
@@ -57,6 +78,16 @@ const removeMember = asyncHandler(async (req, res) => {
     );
   
     await group.save();
+
+    const removedUser = await User.findById(a);
+
+    // Let the removed user know, and let the remaining group members know
+    await logActivity({
+        groupId: group._id,
+        action: "MEMBER_REMOVED",
+        description: `${removedUser?.fullName || 'A user'} was removed from the group.`,
+        relatedUsers: [...group.members, a]
+    });
   
     return res.status(200).json(
       new apiResponse(
@@ -102,6 +133,13 @@ const createGroup = asyncHandler(async (req, res) => {
     thumbnail: img
   });
 
+  await logActivity({
+      groupId: group._id,
+      action: "GROUP_CREATED",
+      description: `Group "${grpName}" was created.`,
+      relatedUsers: group.members
+  });
+
   return res
     .status(201)
     .json(
@@ -131,13 +169,13 @@ const editGroup = asyncHandler(async (req, res) => {
 
   if(thumbnail){
     if(group.thumbnail){
-      await deleteFileFromCloudinary(group.thumbnail);
+      await deleteFromCloudinary(group.thumbnail);
       group.thumbnail="";
     }
     const response = await uploadOnCloudinary(thumbnail);
     group.thumbnail = response?.url;
   } else if (deleteThumbnail === 'true' && group.thumbnail) {
-    await deleteFileFromCloudinary(group.thumbnail);
+    await deleteFromCloudinary(group.thumbnail);
     group.thumbnail = "";
   }
 
@@ -160,6 +198,16 @@ const deleteGroup = asyncHandler(async (req, res) => {
 
   if (!group) {
     throw new apiError(404, "Group not found");
+  }
+
+  // Ownership check
+  if (group.ownerId.toString() !== req.user._id.toString()) {
+    throw new apiError(403, "Only the owner can delete the group");
+  }
+
+  // Cleanup thumbnail from Cloudinary if exists
+  if (group.thumbnail) {
+    await deleteFromCloudinary(group.thumbnail);
   }
 
   await Group.findByIdAndDelete(groupId);

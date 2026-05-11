@@ -1,4 +1,7 @@
 import dotenv from "dotenv";
+import { webcrypto } from "crypto"
+globalThis.crypto = webcrypto
+
 dotenv.config();
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 

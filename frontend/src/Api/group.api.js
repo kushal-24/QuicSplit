@@ -39,3 +39,19 @@ export const updateGroupApi = (groupId, formData) => {
 export const addMemberApi = (groupId, memberId) => {
   return api.post(`/group/${groupId}/addmember`, { a: memberId });
 };
+
+export const removeMemberApi = (groupId, memberId) => {
+  return api.post(`/group/${groupId}/removemember`, { a: memberId });
+};
+
+export const deleteGroupApi = (groupId) => {
+  return api.delete(`/group/${groupId}/deletegroup`);
+};
+
+export const fetchActivityLogs = async () => {
+    return api.get('/activity');
+}
+
+export const clearActivityLogs = async () => {
+    return api.post('/activity/clear');
+}

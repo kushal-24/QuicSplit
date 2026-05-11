@@ -31,10 +31,29 @@ const uploadOnCloudinary = async (localFilePath) => {
     }
 }
 
-const deleteFromCloudinary = async (publicId) => {
+const deleteFromCloudinary = async (url) => {
     try {
-        if (!publicId) return null;
-        const response = await cloudinary.uploader.destroy(publicId);
+        if (!url) return null;
+        
+        // Extract publicId from URL
+        // Example: https://res.cloudinary.com/cloud_name/image/upload/v1234567890/folder/public_id.jpg
+        const parts = url.split('/');
+        const fileNameWithExtension = parts.pop();
+        const publicIdWithFolders = fileNameWithExtension.split('.')[0];
+        
+        // If there are folders, we need to include them. 
+        // Cloudinary URLs store publicId after '/upload/v<version>/'
+        const uploadIndex = parts.indexOf('upload');
+        if (uploadIndex !== -1) {
+            // Skip 'upload' and the version (usually starts with 'v')
+            const startIndex = parts[uploadIndex + 1].startsWith('v') ? uploadIndex + 2 : uploadIndex + 1;
+            const publicId = [...parts.slice(startIndex), publicIdWithFolders].join('/');
+            const response = await cloudinary.uploader.destroy(publicId);
+            return response;
+        }
+        
+        // Fallback for simple URLs
+        const response = await cloudinary.uploader.destroy(publicIdWithFolders);
         return response;
     } catch (error) {
         console.log("Error deleting from Cloudinary:", error);

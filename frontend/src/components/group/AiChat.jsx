@@ -131,7 +131,7 @@ export default function AiChat({ groupId, onFetchGroupData }) {
             <h3 className="text-sm font-bold text-white tracking-wide">Gemini AI</h3>
             <div className="flex items-center gap-1.5">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-              <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tighter">Authenticated Agent</p>
+              <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tighter">QuicSplit Agent</p>
             </div>
           </div>
         </div>
@@ -142,6 +142,35 @@ export default function AiChat({ groupId, onFetchGroupData }) {
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-4 md:p-8 space-y-5 z-10 flex flex-col">
+        {messages.length === 0 && !isProcessing && (
+          <div className="flex flex-col items-center justify-center flex-1 h-full gap-4 text-center mt-8 mb-4 animate-in fade-in duration-500">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#6B5AED]/20 to-[#8879FF]/20 flex items-center justify-center border border-[#6B5AED]/30">
+              <Sparkles size={24} className="text-[#8879FF]" />
+            </div>
+            <div className="space-y-1">
+              <h4 className="text-sm font-semibold text-slate-200">How can I help?</h4>
+              <p className="text-xs text-slate-400 max-w-[250px] mx-auto">
+                I can help you add expenses, record payments, and analyze receipts.
+              </p>
+            </div>
+            <div className="flex flex-col gap-2 mt-4 w-full max-w-[320px]">
+              <button 
+                onClick={() => setInput("Raj paid ₹500 for dinner, split equally among 4")}
+                className="text-left px-4 py-3 rounded-xl bg-[#1A1F2E]/80 border border-slate-700/50 hover:border-[#6B5AED]/50 hover:bg-[#1A1F2E] transition-all text-xs text-slate-300 font-medium flex items-center justify-between group shadow-sm hover:shadow-[#6B5AED]/10"
+              >
+                <span className="pr-2 leading-relaxed">"Raj paid ₹500 for dinner, split equally among 4"</span>
+                <Plus size={14} className="text-slate-500 group-hover:text-[#6B5AED] transition-colors flex-shrink-0" />
+              </button>
+              <button 
+                onClick={() => setInput("Kushal paid back ₹200 to Raj")}
+                className="text-left px-4 py-3 rounded-xl bg-[#1A1F2E]/80 border border-slate-700/50 hover:border-[#6B5AED]/50 hover:bg-[#1A1F2E] transition-all text-xs text-slate-300 font-medium flex items-center justify-between group shadow-sm hover:shadow-[#6B5AED]/10"
+              >
+                <span className="pr-2 leading-relaxed">"Kushal paid back ₹200 to Raj"</span>
+                <Plus size={14} className="text-slate-500 group-hover:text-[#6B5AED] transition-colors flex-shrink-0" />
+              </button>
+            </div>
+          </div>
+        )}
         {messages.map(msg => (
           <div key={msg.id} className={`flex items-start gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
             {msg.sender !== 'user' && (
