@@ -48,11 +48,6 @@ const expenseSchema = new mongoose.Schema(
         message: "At least one participant required",
       },
     },
-    // optional: link to uploaded bill/image
-    // file: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: "File",
-    // },
   },
   { timestamps: true }
 );

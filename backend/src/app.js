@@ -5,8 +5,6 @@ import passport from "passport"
 import "./config/passport.js"
 import googleAuthRouter from "./routes/googleAuth.routes.js"
 
-
-
 const app=express();
 
 app.use(cors({

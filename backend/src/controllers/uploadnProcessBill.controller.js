@@ -43,7 +43,7 @@ const uploadAndProcessBill = asyncHandler(async (req, res) => {
         throw new apiError(500, "File upload failed");
     }
 
-    //LLM comes into the playy
+    //LLM comes into the play
     const imageResponse = await fetch(uploadedFile.secure_url);
     const arrayBuffer = await imageResponse.arrayBuffer(); //reads the response body as raw bytes and helps conversion to base64
     const base64Image = Buffer.from(arrayBuffer).toString("base64"); //converts the raw bytes to base64 string
@@ -91,9 +91,9 @@ const uploadAndProcessBill = asyncHandler(async (req, res) => {
     /** THIS IS WHAT FUZZY RETURNS US ON FUZZYSORT SEARCH
      [
        {
-         string: "Kushal",     // matched string
-         score: 0.02,         // how close the match is (lower = better)
-         obj: {               // 🔥 YOUR ORIGINAL OBJECT
+         string: "Kushal",
+         score: 0.02,
+         obj: {
            _id: "abc123",
            fullName: "Kushal"
          }
@@ -261,7 +261,7 @@ const deleteExpense = asyncHandler(async (req, res) => {
     const { expId } = req.params;
 
     const tobedeleted = await Expense.findByIdAndDelete(expId);
-    
+
     const group = await Group.findById(groupId);
     if (tobedeleted) {
         await logActivity({

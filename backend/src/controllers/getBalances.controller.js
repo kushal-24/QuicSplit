@@ -13,7 +13,7 @@ const getGroupBalances = async (groupId, userId) => {
   //initialise a balances array 
   //iterate through expenses and add the share of each participant to the balances array to find out final owe aur to recieve
   //iterate through settlements and add the share of each participant to the 
-      //balances array to find out final owe aur to recieve
+  //balances array to find out final owe aur to recieve
   // now I just seperate out depters and creditors from baalnce array and tthen make transactions
   //in transactions, I check who has less money of the two depter and creditor and then settle that amount
   //this keeps going on until both depter and creditor are present 
