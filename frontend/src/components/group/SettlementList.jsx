@@ -26,7 +26,7 @@ export default function SettlementList({ transactions, onSettle }) {
               <span className="text-red-400 font-bold text-lg">₹{Math.round(settlement.amount)}</span>
               <button 
                 onClick={() => handleSettle(settlement)}
-                className="px-4 py-2 bg-transparent hover:bg-white/5 border border-slate-600 rounded-full text-sm font-medium text-slate-300 transition-colors"
+                className="px-4 py-2 bg-transparent hover:bg-white/5 border border-slate-600 rounded-full text-sm font-medium text-slate-300 transition-colors cursor-pointer"
               >
                 mark settled
               </button>

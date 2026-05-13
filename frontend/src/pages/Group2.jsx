@@ -192,7 +192,7 @@ export default function Group2({groupId, expenses, totalSpent, transactions, bal
       {/* Floating Action Button for AI Chat on Mobile */}
       <button 
         onClick={() => setIsAiModalOpen(true)}
-        className="lg:hidden fixed bottom-6 right-6 w-14 h-14 bg-linear-to-r from-[#6B5AED] to-[#8879FF] rounded-full flex items-center justify-center shadow-[0_4px_20px_rgba(107,90,237,0.5)] text-white z-50 hover:scale-105 active:scale-95 transition-all"
+        className="lg:hidden fixed bottom-6 right-6 w-14 h-14 bg-linear-to-r from-[#6B5AED] to-[#8879FF] rounded-full flex items-center justify-center shadow-[0_4px_20px_rgba(107,90,237,0.5)] text-white z-50 hover:scale-105 active:scale-95 transition-all cursor-pointer"
       >
         <MessageSquare size={24} />
       </button>
@@ -210,7 +210,7 @@ export default function Group2({groupId, expenses, totalSpent, transactions, bal
                </div>
                <button 
                  onClick={() => setIsAiModalOpen(false)} 
-                 className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800/50 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors">
+                 className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800/50 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer">
                  <X size={18}/>
                </button>
              </div>

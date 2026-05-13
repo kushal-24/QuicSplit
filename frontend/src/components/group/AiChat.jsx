@@ -156,14 +156,14 @@ export default function AiChat({ groupId, onFetchGroupData }) {
             <div className="flex flex-col gap-2 mt-4 w-full max-w-[320px]">
               <button 
                 onClick={() => setInput("Raj paid ₹500 for dinner, split equally among 4")}
-                className="text-left px-4 py-3 rounded-xl bg-[#1A1F2E]/80 border border-slate-700/50 hover:border-[#6B5AED]/50 hover:bg-[#1A1F2E] transition-all text-xs text-slate-300 font-medium flex items-center justify-between group shadow-sm hover:shadow-[#6B5AED]/10"
+                className="text-left px-4 py-3 rounded-xl bg-[#1A1F2E]/80 border border-slate-700/50 hover:border-[#6B5AED]/50 hover:bg-[#1A1F2E] transition-all text-xs text-slate-300 font-medium flex items-center justify-between group shadow-sm hover:shadow-[#6B5AED]/10 cursor-pointer"
               >
                 <span className="pr-2 leading-relaxed">"Raj paid ₹500 for dinner, split equally among 4"</span>
                 <Plus size={14} className="text-slate-500 group-hover:text-[#6B5AED] transition-colors flex-shrink-0" />
               </button>
               <button 
                 onClick={() => setInput("Kushal paid back ₹200 to Raj")}
-                className="text-left px-4 py-3 rounded-xl bg-[#1A1F2E]/80 border border-slate-700/50 hover:border-[#6B5AED]/50 hover:bg-[#1A1F2E] transition-all text-xs text-slate-300 font-medium flex items-center justify-between group shadow-sm hover:shadow-[#6B5AED]/10"
+                className="text-left px-4 py-3 rounded-xl bg-[#1A1F2E]/80 border border-slate-700/50 hover:border-[#6B5AED]/50 hover:bg-[#1A1F2E] transition-all text-xs text-slate-300 font-medium flex items-center justify-between group shadow-sm hover:shadow-[#6B5AED]/10 cursor-pointer"
               >
                 <span className="pr-2 leading-relaxed">"Kushal paid back ₹200 to Raj"</span>
                 <Plus size={14} className="text-slate-500 group-hover:text-[#6B5AED] transition-colors flex-shrink-0" />
@@ -227,7 +227,7 @@ export default function AiChat({ groupId, onFetchGroupData }) {
             </div>
             <button
               onClick={removeSelectedFile}
-              className="absolute -top-2 -right-2 bg-slate-700 hover:bg-red-500/90 rounded-full p-1 text-white shadow-md transition-colors">
+              className="absolute -top-2 -right-2 bg-slate-700 hover:bg-red-500/90 rounded-full p-1 text-white shadow-md transition-colors cursor-pointer">
               <X size={14} />
             </button>
           </div>
@@ -256,7 +256,7 @@ export default function AiChat({ groupId, onFetchGroupData }) {
             onClick={() => fileInputRef.current?.click()}
             disabled={isProcessing && !groupId}
             title="Upload Bill"
-            className="p-3.5 bg-[#1A1F2E] hover:bg-[#252b40] text-slate-300 border border-slate-700/50 rounded-xl font-medium transition-colors flex items-center justify-center disabled:opacity-50 disabled:hover:bg-[#1A1F2E]"
+            className="p-3.5 bg-[#1A1F2E] hover:bg-[#252b40] text-slate-300 border border-slate-700/50 rounded-xl font-medium transition-colors flex items-center justify-center disabled:opacity-50 disabled:hover:bg-[#1A1F2E] cursor-pointer"
           >
             <Plus size={20} />
           </button>
@@ -264,7 +264,7 @@ export default function AiChat({ groupId, onFetchGroupData }) {
           <button
             onClick={handleSend}
             disabled={(!input.trim() && !selectedFile) || isProcessing}
-            className="px-6 py-3.5 bg-[#6B5AED]/10 hover:bg-[#6B5AED]/20 text-[#6B5AED] font-semibold border border-[#6B5AED]/30 rounded-xl text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#6B5AED]/10 flex items-center gap-2">
+            className="px-6 py-3.5 bg-[#6B5AED]/10 hover:bg-[#6B5AED]/20 text-[#6B5AED] font-semibold border border-[#6B5AED]/30 rounded-xl text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#6B5AED]/10 flex items-center gap-2 cursor-pointer">
             {isProcessing ? 'sending...' : 'send'}
           </button>
         </div>

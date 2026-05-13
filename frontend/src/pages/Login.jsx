@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Lock, User, ArrowRight, Sun, Moon, AlertCircle, Check } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight, Sun, Moon, AlertCircle, Check, Combine } from 'lucide-react';
 import { signupApi } from '../Api/auth.api';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../Context/Auth.Context';
@@ -72,6 +72,17 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[rgb(244,247,254)] dark:bg-[#0A0D14] font-sans p-4 transition-colors duration-500 relative animate-page-enter">
+      {/* Logo Section */}
+      <div 
+        className="absolute top-6 left-6 lg:top-8 lg:left-8 z-50 flex items-center gap-3 cursor-pointer group" 
+        onClick={() => navigate('/')}
+      >
+        <div className="w-10 h-10 bg-[#6B5AED] dark:bg-white rounded-xl flex items-center justify-center transform group-hover:-rotate-12 transition-transform duration-300 shadow-[0_0_15px_rgba(107,90,237,0.2)]">
+          <Combine className="text-white dark:text-[#0A0D14]" size={24} strokeWidth={2.5} />
+        </div>
+        <span className="text-xl font-bold text-slate-900 dark:text-white tracking-tighter">QUICSPLIT</span>
+      </div>
+
       {/* Theme Toggle Button */}
       <div className="absolute top-6 right-6 lg:top-8 lg:right-8 z-50">
         {/* <button
@@ -217,7 +228,7 @@ export default function Login() {
           {isLogin ? "Don't have an account? " : "Already have an account? "}
           <button
             onClick={toggleMode}
-            className="text-[#6B5AED] dark:text-[#8879FF] font-semibold hover:underline"
+            className="text-[#6B5AED] dark:text-[#8879FF] font-semibold hover:underline cursor-pointer"
           >
             {isLogin ? 'Sign up' : 'Log in'}
           </button>

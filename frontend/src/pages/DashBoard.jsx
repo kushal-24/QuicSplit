@@ -38,7 +38,7 @@ export default function DashBoard() {
 
   const logoutHandler=async()=>{
     await logout();
-    navigate("/login", { replace: true });
+    navigate("/", { replace: true });
   }
 
   const colors = ["#534AB7", "#0F6E56", "#993C1D", "#185FA5"]
@@ -357,7 +357,7 @@ function CreateGroupModal({ isOpen, onClose, onSuccess }) {
             <Users className="text-[#6B5AED]" size={22} />
             Create New Group
           </h2>
-          <button onClick={onClose} className="p-2 hover:bg-slate-800 rounded-full transition-colors text-slate-400 hover:text-white">
+          <button onClick={onClose} className="p-2 hover:bg-slate-800 rounded-full transition-colors text-slate-400 hover:text-white cursor-pointer">
             <X size={20} />
           </button>
         </div>
@@ -378,7 +378,7 @@ function CreateGroupModal({ isOpen, onClose, onSuccess }) {
               <button 
                 type="button"
                 onClick={() => document.getElementById('group-thumb').click()}
-                className="absolute -bottom-2 -right-2 p-1.5 bg-[#6B5AED] text-white rounded-lg shadow-lg hover:scale-110 transition-transform"
+                className="absolute -bottom-2 -right-2 p-1.5 bg-[#6B5AED] text-white rounded-lg shadow-lg hover:scale-110 transition-transform cursor-pointer"
               >
                 <Plus size={14} />
               </button>
@@ -418,7 +418,7 @@ function CreateGroupModal({ isOpen, onClose, onSuccess }) {
                 {selectedMembers.map(m => (
                   <div key={m._id} className="flex items-center gap-2 bg-[#6B5AED] text-white pl-3 pr-1 py-1 rounded-full text-xs font-medium">
                     {m.fullName}
-                    <button onClick={() => toggleMember(m)} className="p-0.5 hover:bg-white/20 rounded-full">
+                    <button onClick={() => toggleMember(m)} className="p-0.5 hover:bg-white/20 rounded-full cursor-pointer">
                       <X size={14} />
                     </button>
                   </div>
@@ -485,7 +485,7 @@ function CreateGroupModal({ isOpen, onClose, onSuccess }) {
           <button 
             onClick={handleSubmit}
             disabled={loading}
-            className="w-full bg-[#6B5AED] hover:bg-[#5a4add] disabled:opacity-50 disabled:cursor-not-allowed text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-3 shadow-lg shadow-[#6B5AED]/20 active:scale-95 transition-all"
+            className="w-full bg-[#6B5AED] hover:bg-[#5a4add] disabled:opacity-50 disabled:cursor-not-allowed text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-3 shadow-lg shadow-[#6B5AED]/20 active:scale-95 transition-all cursor-pointer"
           >
             {loading ? <Loader2 className="animate-spin" size={20} /> : <Plus size={20} />}
             Create Group

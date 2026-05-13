@@ -88,7 +88,7 @@ export default function ActivityLogsModal({ isOpen, onClose }) {
           </div>
           <button 
             onClick={onClose}
-            className="p-2 hover:bg-slate-800 rounded-full text-slate-400 hover:text-white transition-colors"
+            className="p-2 hover:bg-slate-800 rounded-full text-slate-400 hover:text-white transition-colors cursor-pointer"
           >
             <X size={20} />
           </button>
@@ -115,7 +115,7 @@ export default function ActivityLogsModal({ isOpen, onClose }) {
                 <button 
                   onClick={handleClearLogs}
                   disabled={isClearing}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-xs font-semibold transition-colors disabled:opacity-50"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-xs font-semibold transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   <Trash2 size={14} />
                   {isClearing ? 'Clearing...' : 'Clear Logs'}

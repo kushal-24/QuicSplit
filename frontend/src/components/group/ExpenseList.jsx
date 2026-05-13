@@ -41,14 +41,8 @@ export default function ExpenseList({ expenses = MOCK_EXPENSES, groupData }) {
     <div className="animate-in fade-in duration-300">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <h3 className="text-slate-300 font-medium">{displayExpenses.length} expenses</h3>
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-          <button className="flex-1 justify-center px-4 py-1.5 bg-[#1A1F2E]/50 hover:bg-[#252b40] text-slate-200 text-sm font-medium border border-slate-700/50 rounded-full transition-colors flex items-center gap-1">
-            + add
-          </button>
-          <button className="flex-1 justify-center px-4 py-1.5 bg-[#1A1F2E]/50 hover:bg-[#252b40] text-slate-200 text-sm font-medium border border-slate-700/50 rounded-full transition-colors">
-            upload bill
-          </button>
-        </div>
+        {/* <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+        </div> */}
       </div>
       <div className="flex flex-col">
         {displayExpenses.map(exp => (

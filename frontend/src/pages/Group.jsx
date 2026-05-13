@@ -106,7 +106,7 @@ export default function Group({groupId,expenses,transactions,balances,loading, o
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`capitalize px-6 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
+                className={`capitalize px-6 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap cursor-pointer ${
                   activeTab === tab 
                     ? 'border-2 border-[#6B5AED] text-[#6B5AED] bg-[#6B5AED]/5 dark:bg-[#6B5AED]/10' 
                     : 'border border-slate-200 dark:border-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-[#6B5AED] dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5'

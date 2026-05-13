@@ -119,7 +119,7 @@ export default function SettingsPage() {
       setUpdating(true);
       await deleteAccountApi();
       await logout();
-      navigate('/login');
+      navigate('/');
     } catch (err) {
       alert("Failed to delete account");
     } finally {

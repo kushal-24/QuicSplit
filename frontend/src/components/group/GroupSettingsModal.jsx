@@ -131,13 +131,13 @@ export default function GroupSettingsModal({ isOpen, onClose, groupData, onUpdat
         <div className="flex border-b border-slate-800">
           <button 
             onClick={() => setActiveTab('general')}
-            className={`flex-1 py-3 text-sm font-bold transition-colors ${activeTab === 'general' ? 'text-[#6B5AED] border-b-2 border-[#6B5AED]' : 'text-slate-400 hover:text-slate-200'}`}
+            className={`flex-1 py-3 text-sm font-bold transition-colors cursor-pointer ${activeTab === 'general' ? 'text-[#6B5AED] border-b-2 border-[#6B5AED]' : 'text-slate-400 hover:text-slate-200'}`}
           >
             General
           </button>
           <button 
             onClick={() => setActiveTab('members')}
-            className={`flex-1 py-3 text-sm font-bold transition-colors ${activeTab === 'members' ? 'text-[#6B5AED] border-b-2 border-[#6B5AED]' : 'text-slate-400 hover:text-slate-200'}`}
+            className={`flex-1 py-3 text-sm font-bold transition-colors cursor-pointer ${activeTab === 'members' ? 'text-[#6B5AED] border-b-2 border-[#6B5AED]' : 'text-slate-400 hover:text-slate-200'}`}
           >
             Manage Members
           </button>
@@ -158,7 +158,7 @@ export default function GroupSettingsModal({ isOpen, onClose, groupData, onUpdat
                   </div>
                   <button 
                     onClick={() => document.getElementById('group-edit-thumb').click()}
-                    className="absolute -bottom-2 -right-2 p-2 bg-[#6B5AED] text-white rounded-lg shadow-lg hover:scale-110 transition-transform"
+                    className="absolute -bottom-2 -right-2 p-2 bg-[#6B5AED] text-white rounded-lg shadow-lg hover:scale-110 transition-transform cursor-pointer"
                   >
                     <Edit2 size={14} />
                   </button>
@@ -168,7 +168,7 @@ export default function GroupSettingsModal({ isOpen, onClose, groupData, onUpdat
                         setThumbnail(null);
                         setThumbnailPreview('');
                       }}
-                      className="absolute -bottom-2 -left-2 p-2 bg-red-500/10 text-red-400 border border-red-500/20 rounded-lg shadow-lg hover:scale-110 transition-transform"
+                      className="absolute -bottom-2 -left-2 p-2 bg-red-500/10 text-red-400 border border-red-500/20 rounded-lg shadow-lg hover:scale-110 transition-transform cursor-pointer"
                     >
                       <Trash2 size={14} />
                     </button>
@@ -204,7 +204,7 @@ export default function GroupSettingsModal({ isOpen, onClose, groupData, onUpdat
               <button 
                 onClick={handleUpdateGroup}
                 disabled={loading}
-                className="w-full bg-[#6B5AED] hover:bg-[#5a4add] text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50"
+                className="w-full bg-[#6B5AED] hover:bg-[#5a4add] text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
               >
                 {loading ? <Loader2 className="animate-spin" size={18} /> : <Check size={18} />}
                 Save Changes
@@ -218,7 +218,7 @@ export default function GroupSettingsModal({ isOpen, onClose, groupData, onUpdat
                     <button 
                       onClick={handleDeleteGroup}
                       disabled={loading}
-                      className="w-full bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50"
+                      className="w-full bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
                     >
                       {loading ? <Loader2 className="animate-spin" size={16} /> : <Trash2 size={16} />}
                       Delete Group
@@ -295,7 +295,7 @@ export default function GroupSettingsModal({ isOpen, onClose, groupData, onUpdat
                         <button 
                           onClick={() => handleAddMember(u._id)}
                           disabled={loading}
-                          className="p-1.5 bg-[#6B5AED]/10 text-[#6B5AED] hover:bg-[#6B5AED] hover:text-white rounded-lg transition-all"
+                          className="p-1.5 bg-[#6B5AED]/10 text-[#6B5AED] hover:bg-[#6B5AED] hover:text-white rounded-lg transition-all cursor-pointer"
                         >
                           <Plus size={16} />
                         </button>
