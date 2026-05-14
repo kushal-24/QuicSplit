@@ -6,6 +6,8 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
+    environment:
+      - NODE_ENV=development
 
   frontend:
     build: ./frontend
@@ -14,5 +16,7 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
+    environment:
+      - NODE_ENV=development
     stdin_open: true
     tty: true

@@ -6,7 +6,7 @@ export default function SettlementList({ transactions, onSettle }) {
     if (onSettle) {
       onSettle(settlement);
     } else {
-      console.log('API: mark settlement complete');
+      devLog('API: mark settlement complete');
     }
   };
 
@@ -24,7 +24,7 @@ export default function SettlementList({ transactions, onSettle }) {
             </div>
             <div className="flex items-center gap-5">
               <span className="text-red-400 font-bold text-lg">₹{Math.round(settlement.amount)}</span>
-              <button 
+              <button
                 onClick={() => handleSettle(settlement)}
                 className="px-4 py-2 bg-transparent hover:bg-white/5 border border-slate-600 rounded-full text-sm font-medium text-slate-300 transition-colors cursor-pointer"
               >

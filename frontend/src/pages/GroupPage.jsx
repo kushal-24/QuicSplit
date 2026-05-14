@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from  'react';
+import React, { useState, useEffect } from 'react';
 import Group from './Group';
 import Group2 from './Group2';
 import { getGroup } from '../Api/group.api';
@@ -9,17 +9,17 @@ export default function GroupPage() {
   const [groupData, setGroupData] = useState({});
   const [expenses, setExpenses] = useState([])
   const [totalSpent, setTotalSpent] = useState([])
-  const [transactions, setTransactions] = useState([])                                                                          
+  const [transactions, setTransactions] = useState([])
   const [balances, setBalances] = useState({})
   const [loading, setLoading] = useState(true)
 
-  const { groupId } = useParams()  
+  const { groupId } = useParams()
 
   const fetchGroupData = async () => {
     try {
       const groupData = await getGroup(groupId);
-      console.log("GROUP ALL DATA", groupData.data.data);
-      
+      devLog("GROUP ALL DATA", groupData.data.data);
+
       setGroupData(groupData.data.data.group);
       setBalances(groupData.data.data.balances);
       setTransactions(groupData.data.data.transactions);

@@ -10,11 +10,11 @@ export default function AiChat({ groupId, onFetchGroupData }) {
     // { id: 2, text: 'Done! ₹200 each. Expense added to the group.', sender: 'bot' },
     // { id: 3, text: 'Raj paid Kushal 200 yesterday', sender: 'user' },
     // { id: 4, text: "Recorded. Raj's debt reduced by ₹200. Balances updated.", sender: 'bot' },
-]);
+  ]);
 
   const { upload, remove } = useGroupFileUpload()
   const fileInputRef = useRef(null);
-  
+
 
   const [input, setInput] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
@@ -45,7 +45,7 @@ export default function AiChat({ groupId, onFetchGroupData }) {
         setMessages(prev => [...prev, { id: Date.now() + 1, text: `Analyzing receipt/document...`, sender: 'bot' }]);
         const res = await upload(groupId, currentFile, currentInput);
 
-        console.log("🔥 AI RESULT:", res);
+        devLog("🔥 AI RESULT:", res);
 
         // Update user message to reflect it was completed
         setMessages(prev => prev.map(msg => msg.id === tempMsgId ? { ...msg, text: currentInput || `Uploaded file: ${currentFile.name}` } : msg));
@@ -62,27 +62,27 @@ export default function AiChat({ groupId, onFetchGroupData }) {
         setIsProcessing(false);
       }
     }
-     else {
+    else {
       setIsProcessing(true);
       try {
         // Map UI messages into role/content schema expected by backend
-        const historyForApi = messages.map(m => ({ 
-          role: m.sender === 'user' ? 'user' : 'assistant', 
+        const historyForApi = messages.map(m => ({
+          role: m.sender === 'user' ? 'user' : 'assistant',
           content: m.text
         }));
-        
+
         // Append the new message that we just sent above
         historyForApi.push(
-          { 
-            role: 'user', 
-            content: currentInput 
+          {
+            role: 'user',
+            content: currentInput
           });
 
         const res = await chatWithAi(groupId, historyForApi);
-        console.log("🔥 AI CHAT RESULT:", res.data);
+        devLog("🔥 AI CHAT RESULT:", res.data);
 
         const assistantText = res.data?.data?.reply || res.data?.reply || res.data?.message || "Processed.";
-        
+
         setMessages(prev => [...prev, { id: Date.now() + 1, text: assistantText, sender: 'assistant' }]);
 
         if (onFetchGroupData) onFetchGroupData();
@@ -120,7 +120,7 @@ export default function AiChat({ groupId, onFetchGroupData }) {
 
   return (
     <div className="flex flex-col h-full min-h-[400px] max-h-[600px] border border-slate-800/80 bg-[#0A0D14]/50 rounded-2xl animate-in fade-in duration-300 relative overflow-hidden">
-      
+
       {/* Gemini Header */}
       <div className="px-6 py-4 border-b border-slate-800/80 bg-[#1A1F2E]/40 backdrop-blur-md flex items-center justify-between z-20">
         <div className="flex items-center gap-3">
@@ -136,7 +136,7 @@ export default function AiChat({ groupId, onFetchGroupData }) {
           </div>
         </div>
         <div className="px-2.5 py-1 rounded-md bg-[#6B5AED]/10 border border-[#6B5AED]/20">
-           <span className="text-[10px] font-bold text-[#8879FF] uppercase tracking-widest">v1.5 Pro</span>
+          <span className="text-[10px] font-bold text-[#8879FF] uppercase tracking-widest">v1.5 Pro</span>
         </div>
       </div>
 
@@ -154,14 +154,14 @@ export default function AiChat({ groupId, onFetchGroupData }) {
               </p>
             </div>
             <div className="flex flex-col gap-2 mt-4 w-full max-w-[320px]">
-              <button 
+              <button
                 onClick={() => setInput("Raj paid ₹500 for dinner, split equally among 4")}
                 className="text-left px-4 py-3 rounded-xl bg-[#1A1F2E]/80 border border-slate-700/50 hover:border-[#6B5AED]/50 hover:bg-[#1A1F2E] transition-all text-xs text-slate-300 font-medium flex items-center justify-between group shadow-sm hover:shadow-[#6B5AED]/10 cursor-pointer"
               >
                 <span className="pr-2 leading-relaxed">"Raj paid ₹500 for dinner, split equally among 4"</span>
                 <Plus size={14} className="text-slate-500 group-hover:text-[#6B5AED] transition-colors flex-shrink-0" />
               </button>
-              <button 
+              <button
                 onClick={() => setInput("Kushal paid back ₹200 to Raj")}
                 className="text-left px-4 py-3 rounded-xl bg-[#1A1F2E]/80 border border-slate-700/50 hover:border-[#6B5AED]/50 hover:bg-[#1A1F2E] transition-all text-xs text-slate-300 font-medium flex items-center justify-between group shadow-sm hover:shadow-[#6B5AED]/10 cursor-pointer"
               >

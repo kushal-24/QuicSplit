@@ -30,9 +30,9 @@ export const AuthProvider = ({ children }) => {
     const login = async ({ email, password }) => {
         try {
             const res = await loginApi({ email, password });
-            console.log("LOGIN RESPONSE USER:", res.data.data.user);
+            devLog("LOGIN RESPONSE USER:", res.data.data.user);
             setUser(res.data.data.user);
-            console.log(user);
+            devLog(user);
         } catch (error) {
             throw error;
         }
@@ -41,29 +41,29 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
-    const logout= async()=>{
+    const logout = async () => {
         try {
             await logoutApi();
         } catch (error) {
             console.log(error);
         }
-        finally{
+        finally {
             setUser(null);
         }
     }
 
-    return(
-        <AuthContext.Provider 
-        value={{
-        user,
-        isAuthenticated: !!user,
-        loading,
-        login,
-        logout,
-        checkAuth
-        }}
+    return (
+        <AuthContext.Provider
+            value={{
+                user,
+                isAuthenticated: !!user,
+                loading,
+                login,
+                logout,
+                checkAuth
+            }}
         >
-        {children}
+            {children}
         </AuthContext.Provider>
     )
 

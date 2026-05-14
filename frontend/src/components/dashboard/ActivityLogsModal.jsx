@@ -37,7 +37,7 @@ export default function ActivityLogsModal({ isOpen, onClose }) {
       setIsLoading(true);
       const response = await fetchActivityLogs();
       setLogs(response.data?.data || []);
-      console.log(response.data?.data);
+      devLog(response.data?.data);
       setError(null);
     } catch (err) {
       setError('Failed to load activity logs.');
