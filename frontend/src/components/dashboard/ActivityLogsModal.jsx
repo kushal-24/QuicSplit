@@ -75,7 +75,7 @@ export default function ActivityLogsModal({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" onClick={onClose}>
-      <div 
+      <div
         className="w-full max-w-md h-full bg-[#0A0D14] border-l border-slate-800 shadow-2xl flex flex-col animate-in slide-in-from-right duration-300"
         onClick={e => e.stopPropagation()}
       >
@@ -86,7 +86,7 @@ export default function ActivityLogsModal({ isOpen, onClose }) {
             </div>
             <h2 className="text-lg font-bold text-white tracking-wide">Activity Logs</h2>
           </div>
-          <button 
+          <button
             onClick={onClose}
             className="p-2 hover:bg-slate-800 rounded-full text-slate-400 hover:text-white transition-colors cursor-pointer"
           >
@@ -112,7 +112,7 @@ export default function ActivityLogsModal({ isOpen, onClose }) {
           ) : (
             <div className="space-y-6">
               <div className="flex justify-end mb-2">
-                <button 
+                <button
                   onClick={handleClearLogs}
                   disabled={isClearing}
                   className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-xs font-semibold transition-colors disabled:opacity-50 cursor-pointer"
@@ -121,7 +121,7 @@ export default function ActivityLogsModal({ isOpen, onClose }) {
                   {isClearing ? 'Clearing...' : 'Clear Logs'}
                 </button>
               </div>
-              
+
               <div className="relative border-l-2 border-slate-800/60 ml-3 space-y-8 pb-4">
                 {logs.map((log) => (
                   <div key={log._id} className="relative pl-6">
@@ -129,7 +129,7 @@ export default function ActivityLogsModal({ isOpen, onClose }) {
                     <div className="absolute -left-[11px] top-1 w-5 h-5 rounded-full bg-[#1A1F2E] border-2 border-[#0A0D14] flex items-center justify-center shadow-sm">
                       <div className="w-1.5 h-1.5 rounded-full bg-slate-500"></div>
                     </div>
-                    
+
                     <div className="bg-[#1A1F2E]/60 border border-slate-800/80 rounded-xl p-4 shadow-sm hover:border-slate-700/80 transition-colors">
                       <div className="flex items-start justify-between gap-3 mb-2">
                         <div className="flex items-center gap-2">

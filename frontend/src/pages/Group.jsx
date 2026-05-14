@@ -36,7 +36,7 @@ export default function Group({groupId,expenses,transactions,balances,loading, o
   }
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'bg-[#0A0D14]' : 'bg-[#F8FAFC]'} font-sans text-slate-700 dark:text-slate-200 relative transition-colors duration-300`}>
+    <div className={`min-h-screen ${isDarkMode ? 'bg-[#05050A]' : 'bg-[#F8FAFC]'} font-sans text-slate-700 dark:text-slate-200 relative transition-colors duration-300`}>
       
       {/* Background Aesthetic */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">

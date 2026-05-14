@@ -8,7 +8,7 @@ import apiResponse from "../utils/apiResponse.js"
 const getDashboardData = asyncHandler(async (req, res, next) => {
   const userId = req.user._id
 
-  const groups = await Group.find({ members: userId })
+  const groups = await Group.find({ members: userId }).populate("members", "fullName avatar")
 
   const groupsWithBalance = await Promise.all(groups.map(async (group) => {
     const { balances } = await getGroupBalances(group._id, userId)
@@ -16,7 +16,7 @@ const getDashboardData = asyncHandler(async (req, res, next) => {
     const myBalance = balances[userId.toString()] || 0
 
     const totalExpenses= await Expense.aggregate([
-      {$match: {groupId: group._id}},
+      {$match: {group: group._id}},
       {$group: {_id: null, total: {$sum: "$amount"}}}
     ])
     const totalSpent = totalExpenses[0]?.total || 0
@@ -26,6 +26,11 @@ const getDashboardData = asyncHandler(async (req, res, next) => {
       name: group.grpName,
       thumbnail: group.thumbnail,
       memberCount: group.members.length,
+      members: group.members.slice(0, 4).map(m => ({
+          _id: m._id,
+          fullName: m.fullName,
+          avatar: m.avatar
+      })),
       totalSpent,
       myBalance   // positive = owed money, negative = owes money
     }

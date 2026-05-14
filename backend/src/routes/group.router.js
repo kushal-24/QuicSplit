@@ -10,7 +10,7 @@ router.route("/:groupId/uploadbill").post(verifyJWT, upload.single("file"), uplo
 router.route("/:groupId/sendchat").post(verifyJWT, chatWithAI);
 router.route("/creategroup").post(verifyJWT, upload.single("thumbnail"), createGroup);
 router.route("/:groupId/viewgroup").get(verifyJWT, getGroup);
-router.route("/:groupId/updategroup").patch(verifyJWT, editGroup);
+router.route("/:groupId/updategroup").patch(verifyJWT, upload.single("thumbnail"), editGroup);
 router.route("/:groupId/deletegroup").delete(verifyJWT, deleteGroup);
 router.route("/getallgroups").get(verifyJWT, getAllGroups);
 router.route("/:groupId/createsettlement").post(verifyJWT, createSettlement);

@@ -44,7 +44,7 @@ export default function DashBoard() {
   const colors = ["#534AB7", "#0F6E56", "#993C1D", "#185FA5"]
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'bg-[#0A0D14]' : 'bg-[#F8FAFC]'} font-sans text-slate-700 dark:text-slate-200 relative animate-page-enter transition-colors duration-300`}>
+    <div className={`min-h-screen ${isDarkMode ? 'bg-[#05050A]' : 'bg-[#F8FAFC]'} font-sans text-slate-700 dark:text-slate-200 relative animate-page-enter transition-colors duration-300`}>
       
       {/* Background Gradients & Grid */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
@@ -53,25 +53,19 @@ export default function DashBoard() {
       </div>
       
       {/* Navbar */}
-      <nav className="w-full h-20 border-b border-slate-200 dark:border-slate-800/60 bg-white/70 dark:bg-[#0A0D14]/50 backdrop-blur-2xl sticky top-0 z-50 transition-colors">
+      <nav className="w-full h-20 border-b border-slate-200 dark:border-slate-800/60 bg-white/70 dark:bg-[#05050A]/50 backdrop-blur-2xl sticky top-0 z-50 transition-colors">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 h-full flex items-center justify-between">
           
           {/* Left: Logo */}
           <div className="flex items-center gap-3 cursor-pointer group" onClick={() => navigate('/dashboard')}>
             <div className="w-10 h-10 bg-[#6B5AED] dark:bg-white rounded-xl flex items-center justify-center transform group-hover:-rotate-12 transition-transform duration-300 shadow-[0_0_15px_rgba(107,90,237,0.2)]">
-               <Combine className="text-white dark:text-[#0A0D14]" size={24} strokeWidth={2.5} />
+               <Combine className="text-white dark:text-[#05050A]" size={24} strokeWidth={2.5} />
             </div>
             <span className="text-2xl font-bold text-slate-900 dark:text-white tracking-tighter hidden sm:block">QUICSPLIT</span>
           </div>
 
           {/* Right: Actions */}
           <div className="flex items-center gap-3 relative">
-            {/* <button
-              onClick={toggleTheme}
-              className="p-2.5 bg-slate-100 dark:bg-[#121620] border border-slate-200 dark:border-slate-800 rounded-full text-slate-600 dark:text-slate-400 hover:text-[#6B5AED] transition-all cursor-pointer"
-            >
-              {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-            </button> */}
             <button 
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="flex cursor-pointer items-center gap-3 hover:bg-slate-100 dark:hover:bg-[#1A1F2E] p-1.5 pr-4 rounded-full border border-slate-200 dark:border-slate-800 transition-all active:scale-95 bg-white dark:bg-[#121620]"
@@ -177,13 +171,13 @@ export default function DashBoard() {
 
                 {/* Card Stats */}
                 <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div className="bg-slate-50 dark:bg-[#0A0D14]/50 rounded-xl p-4 border border-slate-100 dark:border-slate-800/50">
+                  <div className="bg-slate-50 dark:bg-[#05050A]/50 rounded-xl p-4 border border-slate-100 dark:border-slate-800/50">
                     <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mb-1.5 flex items-center gap-1.5">
                       <Receipt size={14} className="text-slate-400 dark:text-slate-500"/> Total Expenses
                     </p>
                     <p className="text-[#6B5AED] dark:text-[#8879FF] font-semibold text-lg">{group.totalSpent}</p>
                   </div>
-                  <div className="bg-slate-50 dark:bg-[#0A0D14]/50 rounded-xl p-4 border border-slate-100 dark:border-slate-800/50">
+                  <div className="bg-slate-50 dark:bg-[#05050A]/50 rounded-xl p-4 border border-slate-100 dark:border-slate-800/50">
                     <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mb-1.5 flex items-center gap-1.5">
                       <TrendingUp size={14} className="text-slate-400 dark:text-slate-500"/> My Balance
                     </p>
@@ -200,26 +194,37 @@ export default function DashBoard() {
                 </div>
 
                 {/* Card Footer: Avatars */}
-                {/* <div className="mt-auto flex items-center justify-between pt-5 border-t border-slate-100 dark:border-slate-800/50">
-                   <div className="flex -space-x-3 hover:space-x-0 transition-all duration-300">
-                    {group.members?.slice(0, 3).map((member, idx) => (
-                      <img 
-                        key={idx} 
-                        src={member?.avatar?.replace('http://', 'https://') || pfp}
-                        className="w-9 h-9 rounded-full border-2 border-[#1A1F2E] object-cover hover:z-10 hover:scale-110 transition-transform" 
-                        alt="Member avatar"
-                      />
+                <div className="mt-auto flex items-center justify-between pt-5 border-t border-slate-100 dark:border-slate-800/50">
+                  <div className="flex -space-x-3 hover:space-x-1 transition-all duration-300">
+                    {group.members?.map((member, idx) => (
+                      <div key={idx} className="relative group/avatar">
+                        {member?.avatar ? (
+                          <img 
+                            src={member.avatar.replace('http://', 'https://')}
+                            className="w-9 h-9 rounded-full border-2 border-white dark:border-[#1A1F2E] object-cover hover:z-10 hover:scale-110 transition-all shadow-sm" 
+                            alt={member.fullName}
+                          />
+                        ) : (
+                          <div className="w-9 h-9 rounded-full border-2 border-white dark:border-[#1A1F2E] bg-[#6B5AED] flex items-center justify-center text-[10px] font-bold text-white hover:z-10 hover:scale-110 transition-all shadow-sm">
+                            {member?.fullName?.[0]?.toUpperCase() || '?'}
+                          </div>
+                        )}
+                        {/* Tooltip on hover */}
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-900 text-white text-[10px] rounded opacity-0 group-hover/avatar:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-20 font-medium">
+                          {member?.fullName}
+                        </div>
+                      </div>
                     ))}
-                    {group.memberCount > 3 && (
-                      <div className="w-9 h-9 rounded-full border-2 border-[#1A1F2E] bg-slate-800 flex items-center justify-center text-xs font-medium text-slate-300 z-10">
-                        +{group.memberCount - 3}
+                    {group.membersCount > 4 && (
+                      <div className="w-9 h-9 rounded-full border-2 border-white dark:border-[#1A1F2E] bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs font-bold text-slate-500 dark:text-slate-400 z-10 shadow-sm">
+                        +{group.membersCount - 4}
                       </div>
                     )}
                   </div>
-                  <button className="text-sm cursor-pointer font-medium text-[#6B5AED] group-hover:text-[#8879FF] transition-colors flex items-center gap-1">
+                  <button className="text-sm cursor-pointer font-medium text-[#6B5AED] group-hover:text-[#8879FF] transition-colors flex items-center gap-1 hover:underline underline-offset-4">
                     Details <span className="opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all">→</span>
                   </button>
-                </div> */}
+                </div>
               </div>
             )})}
           </div>
@@ -230,7 +235,7 @@ export default function DashBoard() {
           <div className="flex flex-col items-center justify-center py-20 px-4 text-center bg-[#1A1F2E]/30 backdrop-blur-sm border border-slate-800/50 rounded-3xl border-dashed">
             <div className="w-24 h-24 bg-[#6B5AED]/10 rounded-full flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(107,90,237,0.15)] relative">
               <Users size={40} className="text-[#6B5AED]" />
-              <div className="absolute top-0 right-0 w-6 h-6 bg-[#0A0D14] rounded-full flex items-center justify-center">
+              <div className="absolute top-0 right-0 w-6 h-6 bg-[#05050A] rounded-full flex items-center justify-center">
                 <div className="w-4 h-4 bg-[#6B5AED] rounded-full animate-ping"></div>
                 <div className="w-4 h-4 bg-[#6B5AED] rounded-full absolute"></div>
               </div>
@@ -347,7 +352,7 @@ function CreateGroupModal({ isOpen, onClose, onSuccess }) {
 
   return (
     <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-[#0A0D14]/80 backdrop-blur-sm" onClick={onClose}></div>
+      <div className="absolute inset-0 bg-[#05050A]/80 backdrop-blur-sm" onClick={onClose}></div>
       
       <div className="bg-[#1A1F2E] border border-slate-800 w-full max-w-lg rounded-3xl overflow-hidden relative z-10 shadow-2xl flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
         
@@ -398,7 +403,7 @@ function CreateGroupModal({ isOpen, onClose, onSuccess }) {
                 value={grpName}
                 onChange={(e) => setGrpName(e.target.value)}
                 placeholder="e.g. Goa Trip 2024"
-                className="w-full bg-[#0A0D14] border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#6B5AED]/50 transition-all"
+                className="w-full bg-[#05050A] border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#6B5AED]/50 transition-all"
               />
             </div>
           </div>
@@ -434,12 +439,12 @@ function CreateGroupModal({ isOpen, onClose, onSuccess }) {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search friends by name or email..."
-                className="w-full bg-[#0A0D14]/50 border border-slate-800 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:outline-none focus:border-[#6B5AED]/30 transition-all"
+                className="w-full bg-[#05050A]/50 border border-slate-800 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:outline-none focus:border-[#6B5AED]/30 transition-all"
               />
             </div>
 
             {/* Search Results */}
-            <div className="bg-[#0A0D14]/30 border border-slate-800 rounded-2xl max-h-48 overflow-y-auto">
+            <div className="bg-[#05050A]/30 border border-slate-800 rounded-2xl max-h-48 overflow-y-auto">
               {searching ? (
                 <div className="p-8 flex justify-center">
                   <Loader2 className="text-[#6B5AED] animate-spin" size={24} />

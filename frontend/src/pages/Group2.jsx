@@ -38,14 +38,14 @@ export default function Group2({groupId, expenses, totalSpent, transactions, bal
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0A0D14] flex items-center justify-center">
+      <div className="min-h-screen bg-[#05050A] flex items-center justify-center">
         <PremiumLoader />
       </div>
     );
   }
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'bg-[#0A0D14]' : 'bg-[#F8FAFC]'} font-sans text-slate-700 dark:text-slate-200 relative flex flex-col p-4 md:p-6 h-screen overflow-hidden animate-page-enter transition-colors duration-300`}>
+    <div className={`min-h-screen ${isDarkMode ? 'bg-[#05050A]' : 'bg-[#F8FAFC]'} font-sans text-slate-700 dark:text-slate-200 relative flex flex-col p-4 md:p-6 h-screen overflow-hidden animate-page-enter transition-colors duration-300`}>
       
       {/* Background Aesthetic */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
@@ -214,7 +214,7 @@ export default function Group2({groupId, expenses, totalSpent, transactions, bal
                  <X size={18}/>
                </button>
              </div>
-             <div className="flex-1 overflow-hidden p-4 bg-[#0A0D14]/50">
+             <div className="flex-1 overflow-hidden p-4 bg-[#05050A]/50">
                <AiChat groupId={groupId} />
              </div>
           </div>

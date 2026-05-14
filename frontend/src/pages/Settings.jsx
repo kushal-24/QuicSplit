@@ -130,14 +130,14 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0A0D14] flex items-center justify-center">
+      <div className="min-h-screen bg-[#05050A] flex items-center justify-center">
         <Loader2 className="w-10 h-10 text-[#6B5AED] animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'bg-[#0A0D14]' : 'bg-[#F8FAFC]'} font-sans text-slate-700 dark:text-slate-200 relative overflow-x-hidden animate-page-enter transition-colors duration-300`}>
+    <div className={`min-h-screen ${isDarkMode ? 'bg-[#05050A]' : 'bg-[#F8FAFC]'} font-sans text-slate-700 dark:text-slate-200 relative overflow-x-hidden animate-page-enter transition-colors duration-300`}>
       
       {/* Background Gradients & Grid */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
@@ -146,7 +146,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Header */}
-      <nav className="w-full h-20 border-b border-slate-200 dark:border-slate-800/60 bg-white/70 dark:bg-[#0A0D14]/50 backdrop-blur-2xl sticky top-0 z-50 transition-colors">
+      <nav className="w-full h-20 border-b border-slate-200 dark:border-slate-800/60 bg-white/70 dark:bg-[#05050A]/50 backdrop-blur-2xl sticky top-0 z-50 transition-colors">
         <div className="max-w-4xl mx-auto px-6 h-full flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button 
@@ -192,7 +192,7 @@ export default function SettingsPage() {
           <div className="flex flex-col md:flex-row gap-10 items-start">
             {/* Avatar Display */}
             <div className="relative group">
-              <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-slate-100 dark:border-[#6B5AED]/50 bg-slate-50 dark:bg-[#0A0D14] flex items-center justify-center relative">
+              <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-slate-100 dark:border-[#6B5AED]/50 bg-slate-50 dark:bg-[#05050A] flex items-center justify-center relative">
                 {userData.avatar ? (
                   <img src={userData.avatar.replace('http://', 'https://')} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
@@ -200,7 +200,7 @@ export default function SettingsPage() {
                 )}
                 
                 {updating && (
-                  <div className="absolute inset-0 bg-[#0A0D14]/60 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-[#05050A]/60 flex items-center justify-center">
                     <Loader2 className="w-8 h-8 text-[#6B5AED] animate-spin" />
                   </div>
                 )}
@@ -244,7 +244,7 @@ export default function SettingsPage() {
                         type="text" 
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
-                        className="flex-1 bg-white dark:bg-[#0A0D14] border border-[#6B5AED]/50 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#6B5AED]/20 transition-all"
+                        className="flex-1 bg-white dark:bg-[#05050A] border border-[#6B5AED]/50 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#6B5AED]/20 transition-all"
                         autoFocus
                       />
                       <button onClick={handleNameUpdate} className="p-2.5 cursor-pointer bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl hover:bg-emerald-500/20 transition-colors">
@@ -255,7 +255,7 @@ export default function SettingsPage() {
                       </button>
                     </div>
                   ) : (
-                    <div className="flex flex-1 items-center justify-between bg-slate-50 dark:bg-[#0A0D14]/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5 group">
+                    <div className="flex flex-1 items-center justify-between bg-slate-50 dark:bg-[#05050A]/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5 group">
                       <span className="text-slate-900 dark:text-white font-medium">{userData.fullName}</span>
                       <button 
                         onClick={() => setIsEditingName(true)}
@@ -270,7 +270,7 @@ export default function SettingsPage() {
 
               <div className="space-y-2">
                 <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">Email Address</label>
-                <div className="bg-slate-100 dark:bg-[#0A0D14]/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5 text-slate-500 dark:text-slate-400 cursor-not-allowed">
+                <div className="bg-slate-100 dark:bg-[#05050A]/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5 text-slate-500 dark:text-slate-400 cursor-not-allowed">
                   {userData.email}
                 </div>
                 <p className="text-[10px] text-slate-400 dark:text-slate-600">Email address cannot be changed.</p>
@@ -304,7 +304,7 @@ export default function SettingsPage() {
                     type={showPass[field.id] ? "text" : "password"}
                     value={field.value}
                     onChange={(e) => setPasswords({...passwords, [field.id]: e.target.value})}
-                    className="w-full bg-slate-50 dark:bg-[#0A0D14] border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-[#6B5AED] dark:focus:border-[#6B5AED]/50 focus:ring-2 focus:ring-[#6B5AED]/10 transition-all placeholder:text-slate-300 dark:placeholder:text-slate-700"
+                    className="w-full bg-slate-50 dark:bg-[#05050A] border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-[#6B5AED] dark:focus:border-[#6B5AED]/50 focus:ring-2 focus:ring-[#6B5AED]/10 transition-all placeholder:text-slate-300 dark:placeholder:text-slate-700"
                     placeholder="••••••••"
                     required
                   />
@@ -352,7 +352,7 @@ export default function SettingsPage() {
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 z-100 flex items-center justify-center p-6 sm:p-0">
-          <div className="absolute inset-0 bg-[#0A0D14]/80 backdrop-blur-sm" onClick={() => setShowDeleteModal(false)}></div>
+          <div className="absolute inset-0 bg-[#05050A]/80 backdrop-blur-sm" onClick={() => setShowDeleteModal(false)}></div>
           <div className="bg-[#1A1F2E] border border-slate-800 w-full max-w-md rounded-3xl p-8 relative z-10 shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-6 mx-auto">
               <Trash2 className="text-red-500" size={32} />

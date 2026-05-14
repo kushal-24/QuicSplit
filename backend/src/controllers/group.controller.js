@@ -159,11 +159,6 @@ const editGroup = asyncHandler(async (req, res) => {
     throw new apiError(404, "Group not found");
   }
 
-  //ownerId check
-  if(group.ownerId.toString() !== req.user._id.toString()){
-    throw new apiError(403, "You are not the owner of this group");
-  }
-
   const thumbnail = req.file?.path;
   const { grpName, deleteThumbnail } = req.body;
 
@@ -173,7 +168,7 @@ const editGroup = asyncHandler(async (req, res) => {
       group.thumbnail="";
     }
     const response = await uploadOnCloudinary(thumbnail);
-    group.thumbnail = response?.url;
+    group.thumbnail = response?.secure_url;
   } else if (deleteThumbnail === 'true' && group.thumbnail) {
     await deleteFromCloudinary(group.thumbnail);
     group.thumbnail = "";
@@ -271,6 +266,7 @@ const getAllGroups = asyncHandler(async (req, res) => {
 
   const groups = await Group.find({members: userId})
     .populate("ownerId", "fullName")
+    .populate("members", "fullName avatar")
     .select("grpName thumbnail members ownerId");
 
   if (!groups || groups.length === 0) {
@@ -284,6 +280,11 @@ const getAllGroups = asyncHandler(async (req, res) => {
     grpName: group.grpName,
     thumbnail: group.thumbnail,
     membersCount: group.members.length,
+    members: group.members.slice(0, 4).map(m => ({
+        _id: m._id,
+        fullName: m.fullName,
+        avatar: m.avatar
+    })),
     owner: group.ownerId
   }));
 

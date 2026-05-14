@@ -35,7 +35,6 @@ const getGroupBalances = async (groupId, userId) => {
 
   // Fetch data, expense has who paid the bill and was shared by whom
   const expenses = await Expense.find({ group: groupId })
-  .populate("expenseName")
   .populate("paidBy", "fullName")
   
   const settlements = await Settlement.find({ group: groupId });
@@ -49,30 +48,38 @@ const getGroupBalances = async (groupId, userId) => {
 
   //  Process expenses
   expenses.forEach(exp => {
-    const paidBy = exp.paidBy._id.toString();    
+    if (!exp.paidBy) return; // Skip if payer is missing
+    const paidBy = exp.paidBy._id.toString();
 
     exp.participants.forEach(p => {
-      const user = p.user._id.toString();
+      if (!p.user) return; // Skip if participant user is missing
+      const user = p.user.toString();
       const share = p.share;
 
+      // Ensure the user exists in balances (might have left the group)
+      if (balances[user] === undefined) balances[user] = 0;
+      if (balances[paidBy] === undefined) balances[paidBy] = 0;
 
       if (user === paidBy) {
-        balances[user] += (exp.amount - share); //usne hi pay kia hai toh uska '+' me rakho
+        balances[user] += (exp.amount - share);
       } else {
         balances[user] -= share;
       }
     });
   });
 
-  //Process settlements jisko mile hai usse dept kam karnaa
+  //Process settlements
   settlements.forEach(s => {
+    if (!s.from || !s.to) return;
     const from = s.from.toString();
     const to = s.to.toString();
     const amount = s.amount;
 
+    if (balances[from] === undefined) balances[from] = 0;
+    if (balances[to] === undefined) balances[to] = 0;
+
     balances[from] += amount;   // paid back → less debt
     balances[to] -= amount;     // received → reduce credit
-
   });
 
   //Convert balances → transactions
@@ -80,15 +87,14 @@ const getGroupBalances = async (groupId, userId) => {
   const debtors = [];
 
   for (let user in balances) {
-    if (balances[user] > 0) {
+    if (balances[user] > 0.01) { // Use a small epsilon for floating point issues
       creditors.push({ user, amount: balances[user] });
-    } else if (balances[user] < 0) {
+    } else if (balances[user] < -0.01) {
       debtors.push({ user, amount: -balances[user] });
     }
   }
 
   const transactions = [];
-
   let i = 0, j = 0;
 
   while (i < debtors.length && j < creditors.length) {
@@ -106,8 +112,8 @@ const getGroupBalances = async (groupId, userId) => {
     debt.amount -= settleAmount;
     credit.amount -= settleAmount;
 
-    if (debt.amount === 0) i++;
-    if (credit.amount === 0) j++;
+    if (debt.amount < 0.01) i++;
+    if (credit.amount < 0.01) j++;
   }
 
   const populatedTransactions = await Promise.all(
@@ -116,8 +122,8 @@ const getGroupBalances = async (groupId, userId) => {
       const toUser = await User.findById(t.to).select("fullName");
 
       return {
-        from: { _id: fromUser._id, name: fromUser.fullName },
-        to: { _id: toUser._id, name: toUser.fullName },
+        from: { _id: fromUser?._id || t.from, name: fromUser?.fullName || "Deleted User" },
+        to: { _id: toUser?._id || t.to, name: toUser?.fullName || "Deleted User" },
         amount: t.amount
       };
     })
@@ -125,10 +131,10 @@ const getGroupBalances = async (groupId, userId) => {
 
   // Response
   return {
-        balances,
-        transactions: populatedTransactions,
-        expenses
-      }
+    balances,
+    transactions: populatedTransactions,
+    expenses
+  }
 };
 
 export { getGroupBalances };
