@@ -1,5 +1,7 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
+import {devLog} from "../../utils/logger.js"
+
 
 export default function SettlementList({ transactions, onSettle }) {
   const handleSettle = (settlement) => {

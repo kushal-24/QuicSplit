@@ -3,6 +3,8 @@ import Group from './Group';
 import Group2 from './Group2';
 import { getGroup } from '../Api/group.api';
 import { useParams } from 'react-router-dom';
+import {devLog} from "../utils/logger.js"
+
 
 export default function GroupPage() {
   const [isDesktop, setIsDesktop] = useState(typeof window !== 'undefined' ? window.innerWidth >= 768 : true);
@@ -12,6 +14,7 @@ export default function GroupPage() {
   const [transactions, setTransactions] = useState([])
   const [balances, setBalances] = useState({})
   const [loading, setLoading] = useState(true)
+  
 
   const { groupId } = useParams()
 

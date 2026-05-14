@@ -9,6 +9,8 @@ import { Settings as SettingsIcon } from 'lucide-react';
 import { PremiumLoader } from '../components/common/LoadingStates';
 import { useTheme } from '../Context/Theme.Context';
 import { useNavigate } from 'react-router-dom';
+import {devLog} from "../utils/logger.js"
+
 
 export default function Group2({ groupId, expenses, totalSpent, transactions, balances, loading, onFetchGroupData, groupData }) {
   const navigate = useNavigate();

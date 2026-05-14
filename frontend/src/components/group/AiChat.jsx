@@ -3,6 +3,7 @@ import { Plus, X, FileText, Sparkles } from 'lucide-react';
 import { useGroupFileUpload } from '../../Hoooks/fileManager';
 import { chatWithAi } from '../../Api/group.api';
 import ReactMarkdown from "react-markdown"
+import {devLog} from "../../utils/logger.js"
 
 export default function AiChat({ groupId, onFetchGroupData }) {
   const [messages, setMessages] = useState([

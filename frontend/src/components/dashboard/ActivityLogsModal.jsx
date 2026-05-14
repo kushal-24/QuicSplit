@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Activity, Trash2, Clock, CheckCircle2, UserPlus, UserMinus, PlusCircle, Trash } from 'lucide-react';
 import { fetchActivityLogs, clearActivityLogs } from '../../Api/group.api';
+import {devLog} from "../../utils/logger.js"
 
 function formatDistanceToNow(dateInput) {
   const date = new Date(dateInput);

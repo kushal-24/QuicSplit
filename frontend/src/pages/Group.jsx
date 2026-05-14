@@ -9,6 +9,8 @@ import SettlementList from '../components/group/SettlementList';
 import AiChat from '../components/group/AiChat';
 import { useAuth } from '../Context/Auth.Context';
 import { createSettlement } from '../Api/group.api';
+import {devLog} from "../utils/logger.js"
+
 
 export default function Group({ groupId, expenses, transactions, balances, loading, onFetchGroupData, groupData, totalSpent }) {
   const navigate = useNavigate();
