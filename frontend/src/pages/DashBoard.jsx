@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Combine, Settings, LogOut, Plus, TrendingUp, Receipt, ChevronDown, Users, X, Search, Camera, Loader2, Check } from 'lucide-react';
+import { Combine, Settings, LogOut, Plus, TrendingUp, Receipt, ChevronDown, Users, X, Search, Camera, Loader2, Check, Bell, UserPlus, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import { getDashboardData, getAllUsers } from '../Api/auth.api'; 
-import { createGroupApi } from '../Api/group.api';
+import { createGroupApi, getPendingInvitationsApi, acceptInvitationApi, rejectInvitationApi } from '../Api/group.api';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../Context/Auth.Context';
 import { useTheme } from '../Context/Theme.Context';
 import pfp from "../assets/pfp.jpg";
 import { GroupSkeleton } from '../components/common/LoadingStates';
-import { Moon, Sun, Activity } from 'lucide-react';
+import { Activity } from 'lucide-react';
 import ActivityLogsModal from '../components/dashboard/ActivityLogsModal';
 
 export default function DashBoard() {
@@ -19,22 +19,55 @@ export default function DashBoard() {
   const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
   const [groups, setGroups] = useState([]); 
   const [isLoading, setIsLoading] = useState(true);
+  const [pendingInvites, setPendingInvites] = useState([]);
+  const [isInviteDropdownOpen, setIsInviteDropdownOpen] = useState(false);
+  const [alert, setAlert] = useState(null);
   
   useEffect(() => {
     const fetchAllData = async () => {
       try {
         setIsLoading(true);
         const response = await getDashboardData();     
-        console.log("RESPONSE", response.data.data);
         setGroups(response.data.data);
+
+        // Fetch pending invites
+        const inviteRes = await getPendingInvitationsApi();
+        setPendingInvites(inviteRes.data.data);
       } catch (error) {
-        console.error('Error fetching groups:', error);
+        console.error('Error fetching dashboard data:', error);
       } finally {
         setIsLoading(false);
       }
     };
     fetchAllData();
   }, []); 
+
+  const handleAcceptInvite = async (inviteId, groupName) => {
+    try {
+      await acceptInvitationApi(inviteId);
+      setIsInviteDropdownOpen(false)
+      setPendingInvites(prev => prev.filter(inv => inv._id !== inviteId));
+      setAlert({ type: 'success', message: `You joined ${groupName}!` });
+      setTimeout(() => setAlert(null), 5000);
+      
+      // Refresh groups
+      const response = await getDashboardData();
+      setGroups(response.data.data);
+    } catch (error) {
+      console.error("Failed to accept invite", error);
+      setAlert({ type: 'error', message: 'Failed to join group' });
+      setTimeout(() => setAlert(null), 3000);
+    }
+  };
+
+  const handleRejectInvite = async (inviteId) => {
+    try {
+      await rejectInvitationApi(inviteId);
+      setPendingInvites(prev => prev.filter(inv => inv._id !== inviteId));
+    } catch (error) {
+      console.error("Failed to reject invite", error);
+    }
+  };
 
   const logoutHandler=async()=>{
     await logout();
@@ -106,6 +139,23 @@ export default function DashBoard() {
         </div>
       </nav>
 
+      {/* Top Alert Message */}
+      {alert && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[60] animate-in slide-in-from-top-4 duration-300">
+          <div className={`flex items-center gap-3 px-6 py-3 rounded-2xl shadow-2xl backdrop-blur-xl border ${
+            alert.type === 'success' 
+            ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-500' 
+            : 'bg-rose-500/10 border-rose-500/50 text-rose-500'
+          }`}>
+            {alert.type === 'success' ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
+            <span className="font-bold text-sm">{alert.message}</span>
+            <button onClick={() => setAlert(null)} className="ml-2 hover:bg-white/10 rounded-full p-1 transition-colors">
+              <X size={14} />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Main Body */}
       <main className="max-w-7xl mx-auto px-6 lg:px-8 py-10 relative z-10">
         
@@ -116,7 +166,84 @@ export default function DashBoard() {
             <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm">Manage expenses and track shared balances.</p>
           </div>
           
-          <div className="flex items-center gap-3">
+           <div className="flex items-center gap-3">
+            {/* Pending Invites Button */}
+            <div className="relative">
+              <button 
+                onClick={() => setIsInviteDropdownOpen(!isInviteDropdownOpen)}
+                className={`w-12 h-12 rounded-full cursor-pointer flex items-center justify-center transition-all border ${
+                  pendingInvites.length > 0 
+                  ? 'bg-[#6B5AED]/10 border-[#6B5AED]/30 text-[#6B5AED] animate-pulse' 
+                  : 'bg-white dark:bg-[#1A1F2E] border-slate-200 dark:border-slate-800 text-slate-500'
+                } hover:scale-110 active:scale-95`}
+              >
+                <Bell size={22} />
+                {pendingInvites.length > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-[#05050A]">
+                    {pendingInvites.length}
+                  </span>
+                )}
+              </button>
+
+              {/* Invites Dropdown */}
+              {isInviteDropdownOpen && (
+                <div className="absolute right-0 top-full mt-3 w-80 bg-white dark:bg-[#1A1F2E] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                    <h3 className="font-bold text-slate-900 dark:text-white">Group Requests</h3>
+                    <span className="text-[10px] font-bold text-[#6B5AED] bg-[#6B5AED]/10 px-2 py-0.5 rounded-full">
+                      {pendingInvites.length} New
+                    </span>
+                  </div>
+                  <div className="max-h-80 overflow-y-auto">
+                    {pendingInvites.length > 0 ? (
+                      pendingInvites.map((invite) => (
+                        <div key={invite._id} className="p-4 border-b border-slate-50 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-[#252b40] transition-colors">
+                          <div className="flex gap-3 mb-3">
+                            <div className="w-10 h-10 rounded-xl bg-[#6B5AED]/20 flex items-center justify-center text-[#6B5AED] font-bold shrink-0 overflow-hidden">
+                              {invite.group.thumbnail ? (
+                                <img src={invite.group.thumbnail.replace('http://', 'https://')} className="w-full h-full object-cover" alt="G" />
+                              ) : (
+                                invite.group.grpName[0].toUpperCase()
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">
+                                {invite.group.grpName}
+                              </p>
+                              <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                                Invited by <span className="text-[#6B5AED] font-medium">{invite.inviter.fullName}</span>
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <button 
+                              onClick={() => handleAcceptInvite(invite._id, invite.group.grpName)}
+                              className="flex-1 py-2 bg-[#6B5AED] hover:bg-[#5a4add] text-white text-xs font-bold rounded-lg transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
+                            >
+                              <CheckCircle size={14} /> Accept
+                            </button>
+                            <button 
+                              onClick={() => handleRejectInvite(invite._id)}
+                              className="flex-1 py-2 bg-slate-100 dark:bg-[#05050A] hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-bold rounded-lg transition-all cursor-pointer flex items-center justify-center gap-1.5 active:scale-95"
+                            >
+                              <XCircle size={14} /> Ignore
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="p-8 text-center">
+                        <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800/50 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <UserPlus size={20} className="text-slate-400" />
+                        </div>
+                        <p className="text-sm text-slate-500 font-medium">No pending requests</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
             <button 
               onClick={() => setIsActivityModalOpen(true)}
               className="bg-white dark:bg-[#1A1F2E] cursor-pointer hover:bg-slate-50 dark:hover:bg-[#252b40] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800/80 px-4 py-3 rounded-xl flex items-center justify-center gap-2 font-medium transition-all shadow-sm active:scale-95"
@@ -493,10 +620,11 @@ function CreateGroupModal({ isOpen, onClose, onSuccess }) {
             className="w-full bg-[#6B5AED] hover:bg-[#5a4add] disabled:opacity-50 disabled:cursor-not-allowed text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-3 shadow-lg shadow-[#6B5AED]/20 active:scale-95 transition-all cursor-pointer"
           >
             {loading ? <Loader2 className="animate-spin" size={20} /> : <Plus size={20} />}
-            Create Group
+            Create Group & Send Invites
           </button>
-          <p className="text-center text-[10px] text-slate-500 mt-4">
-            You will automatically be added as the group owner.
+          <p className="text-center text-[10px] text-slate-500 mt-4 leading-relaxed">
+            You will automatically be added as the group owner. <br />
+            Members will be added once they accept your invitation.
           </p>
         </div>
       </div>

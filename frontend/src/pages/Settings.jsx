@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../Context/Auth.Context';
 import { useTheme } from '../Context/Theme.Context';
 import { changeFullName, changePassApi, updateAvatarApi, deleteAvatarApi, deleteAccountApi, getMeApi } from '../Api/auth.api';
-import { Moon, Sun } from 'lucide-react';
 
 export default function SettingsPage() {
   const navigate = useNavigate();
@@ -158,12 +157,7 @@ export default function SettingsPage() {
             <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Settings</h1>
           </div>
           <div className="flex items-center gap-4">
-             <button
-               onClick={toggleTheme}
-               className="p-2.5 bg-slate-100 dark:bg-[#121620] border border-slate-200 dark:border-slate-800 rounded-full text-slate-600 dark:text-slate-400 hover:text-[#6B5AED] transition-all cursor-pointer"
-             >
-               {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
-             </button>
+             
              <div className="hidden sm:flex items-center gap-2">
                 <div className="w-8 h-8 bg-[#6B5AED] dark:bg-white rounded-lg flex items-center justify-center">
                   <Combine className="text-white dark:text-[#6B5AED]" size={18} />

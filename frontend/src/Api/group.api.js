@@ -55,3 +55,15 @@ export const fetchActivityLogs = async () => {
 export const clearActivityLogs = async () => {
     return api.post('/activity/clear');
 }
+
+export const getPendingInvitationsApi = async () => {
+    return api.get('/group/invitations/pending');
+}
+
+export const acceptInvitationApi = async (invitationId) => {
+    return api.post(`/group/invitations/${invitationId}/accept`);
+}
+
+export const rejectInvitationApi = async (invitationId) => {
+    return api.post(`/group/invitations/${invitationId}/reject`);
+}

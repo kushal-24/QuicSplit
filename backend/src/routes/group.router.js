@@ -3,6 +3,7 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { addMember, createGroup, deleteGroup, editGroup, getAllGroups, getGroup, getGroupMembers, removeMember } from "../controllers/group.controller.js";
 import { chatWithAI, createSettlement, uploadAndProcessBill } from "../controllers/uploadnProcessBill.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
+import { acceptInvitation, getPendingInvitations, rejectInvitation } from "../controllers/invitation.controller.js";
 
 const router= new Router()
 
@@ -20,5 +21,10 @@ router.route("/:groupId/createsettlement").post(verifyJWT, createSettlement);
 router.route("/:groupId/addmember").post(verifyJWT, addMember);
 router.route("/:groupId/removemember").post(verifyJWT, removeMember);
 router.route("/:groupId/getgroupmembers").get(verifyJWT, getGroupMembers);
+
+// Invitations
+router.route("/invitations/pending").get(verifyJWT, getPendingInvitations);
+router.route("/invitations/:invitationId/accept").post(verifyJWT, acceptInvitation);
+router.route("/invitations/:invitationId/reject").post(verifyJWT, rejectInvitation);
 
 export default router;

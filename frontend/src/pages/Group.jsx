@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Settings as SettingsIcon, Moon, Sun } from 'lucide-react';
+import { ArrowLeft, Settings as SettingsIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../Context/Theme.Context';
 import GroupSettingsModal from '../components/group/GroupSettingsModal';

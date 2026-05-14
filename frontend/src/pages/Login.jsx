@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Lock, User, ArrowRight, Sun, Moon, AlertCircle, Check, Combine } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight, AlertCircle, Check, Combine } from 'lucide-react';
 import { signupApi } from '../Api/auth.api';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../Context/Auth.Context';
-import { useTheme } from '../Context/Theme.Context';
 
 export default function Login() {
   const location = useLocation();
   const [isLogin, setIsLogin] = useState(location.state?.isLogin ?? true);
-  const { isDarkMode, toggleTheme } = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -85,12 +83,6 @@ export default function Login() {
 
       {/* Theme Toggle Button */}
       <div className="absolute top-6 right-6 lg:top-8 lg:right-8 z-50">
-        {/* <button
-          onClick={toggleTheme}
-          className="p-3 bg-white/50 dark:bg-[#1A1F2E]/50 backdrop-blur-md border border-slate-200 dark:border-slate-800 rounded-full shadow-sm hover:scale-105 active:scale-95 transition-all text-slate-800 dark:text-white cursor-pointer"
-          aria-label="Toggle theme">
-          {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-        </button> */}
       </div>
 
       <div className="w-full max-w-[480px] bg-white dark:bg-[#1A1F2E] rounded-4xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] p-6 md:p-8 transition-all duration-500 relative overflow-hidden">

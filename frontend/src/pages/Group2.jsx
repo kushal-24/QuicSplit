@@ -5,7 +5,7 @@ import AiChat from '../components/group/AiChat';
 import { useAuth } from '../Context/Auth.Context';
 import { createSettlement } from '../Api/group.api';
 import GroupSettingsModal from '../components/group/GroupSettingsModal';
-import { Settings as SettingsIcon, Moon, Sun } from 'lucide-react';
+import { Settings as SettingsIcon } from 'lucide-react';
 import { PremiumLoader } from '../components/common/LoadingStates';
 import { useTheme } from '../Context/Theme.Context';
 import { useNavigate } from 'react-router-dom';
@@ -96,12 +96,6 @@ export default function Group2({groupId, expenses, totalSpent, transactions, bal
               <span className="text-slate-500 dark:text-slate-400 font-medium text-xs uppercase tracking-wider">Total spent</span>
               <span className="text-slate-900 dark:text-white font-bold text-base">₹{Math.round(totalSpent || 0)}</span>
             </div>
-            <button 
-              onClick={toggleTheme}
-              className="p-2.5 bg-slate-100 dark:bg-[#1A1F2E] border border-slate-200 dark:border-slate-700/80 rounded-full hover:text-[#6B5AED] transition-all cursor-pointer"
-            >
-              {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
             <button 
               onClick={() => setIsSettingsModalOpen(true)}
               className="p-2.5 bg-slate-100 dark:bg-[#1A1F2E] border border-slate-200 dark:border-slate-700/80 rounded-full hover:text-[#6B5AED] transition-all cursor-pointer"

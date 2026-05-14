@@ -7,15 +7,18 @@ import { getGroupBalances } from "./getBalances.controller.js";
 import { Expense } from "../models/expense.model.js";
 import { logActivity } from "../utils/activityLogger.js";
 import { User } from "../models/user.model.js";
+import { Invitation } from "../models/invitation.model.js";
 
 //ADD AND REMOVE MEMBERS
 
-const addMember= asyncHandler(async(req,res)=>{
-    const {groupId}= req.params;
-    const{a}=req.body;
-    const group= await Group.findById(groupId)
-    if(!group){
-        throw new apiError(403,"Group was not found");
+const addMember = asyncHandler(async (req, res) => {
+    const { groupId } = req.params;
+    const { a } = req.body; // inviteeId
+    const userId = req.user._id;
+
+    const group = await Group.findById(groupId)
+    if (!group) {
+        throw new apiError(403, "Group was not found");
     }
 
     const isAlreadyMember = group.members?.some((memberId) => memberId.toString() === a.toString());
@@ -23,28 +26,43 @@ const addMember= asyncHandler(async(req,res)=>{
         throw new apiError(403, "this user is already a member of the board");
     }
 
-    group.members.push(a);
+    // Check if invitation already exists
+    const existingInvitation = await Invitation.findOne({
+        group: groupId,
+        invitee: a,
+        status: "PENDING"
+    });
 
-    await group.save();
+    if (existingInvitation) {
+        throw new apiError(400, "Invitation already sent to this user");
+    }
+
+    // Create invitation instead of adding directly
+    await Invitation.create({
+        group: groupId,
+        inviter: userId,
+        invitee: a,
+        status: "PENDING"
+    });
 
     const addedUser = await User.findById(a);
 
     await logActivity({
         groupId: group._id,
-        action: "MEMBER_ADDED",
-        description: `${addedUser?.fullName || 'A new user'} was added to the group.`,
-        relatedUsers: group.members
+        action: "MEMBER_INVITED",
+        description: `${addedUser?.fullName || 'A user'} was invited to the group.`,
+        relatedUsers: [...group.members, a]
     });
 
     return res
-    .status(200)
-    .json( 
-        new apiResponse(
-            group,
-            200,
-            "member added successfully"
+        .status(200)
+        .json(
+            new apiResponse(
+                null,
+                200,
+                "Invitation sent successfully"
+            )
         )
-    )
 })
 
 const removeMember = asyncHandler(async (req, res) => {
@@ -102,7 +120,6 @@ const createGroup = asyncHandler(async (req, res) => {
   const { grpName, members } = req.body;
   const userId = req.user._id;
 
-  // thumbnail is uploaded via multer (upload.single("thumbnail"))
   const thumbnailLocalPath = req.file?.path;
   let img = null;
   if (thumbnailLocalPath) {
@@ -114,7 +131,6 @@ const createGroup = asyncHandler(async (req, res) => {
     throw new apiError(400, "Group name is required");
   }
 
-  // members might come as a JSON string if sent via FormData
   let membersList = [];
   try {
     membersList = typeof members === 'string' ? JSON.parse(members) : (members || []);
@@ -122,22 +138,33 @@ const createGroup = asyncHandler(async (req, res) => {
     membersList = [];
   }
 
-  // Ensure owner is in the members list and unique using creationn of a set
-  const allMembers = Array.from(
-    new Set([userId.toString(), ...membersList.map(m => m.toString())]));
-
+  // Create group with only the owner first
   const group = await Group.create({
     grpName,
     ownerId: userId,
-    members: allMembers,
+    members: [userId], // Only owner is a direct member initially
     thumbnail: img
   });
+
+  // Create invitations for all other intended members
+  const invitations = membersList
+    .filter(m => m.toString() !== userId.toString())
+    .map(inviteeId => ({
+      group: group._id,
+      inviter: userId,
+      invitee: inviteeId,
+      status: "PENDING"
+    }));
+
+  if (invitations.length > 0) {
+    await Invitation.insertMany(invitations);
+  }
 
   await logActivity({
       groupId: group._id,
       action: "GROUP_CREATED",
       description: `Group "${grpName}" was created.`,
-      relatedUsers: group.members
+      relatedUsers: [userId, ...membersList]
   });
 
   return res
@@ -146,7 +173,7 @@ const createGroup = asyncHandler(async (req, res) => {
       new apiResponse(
         group,
         201,
-        "Group created successfully"
+        "Group created successfully and invitations sent"
       )
     );
 });

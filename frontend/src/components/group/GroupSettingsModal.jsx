@@ -66,12 +66,12 @@ export default function GroupSettingsModal({ isOpen, onClose, groupData, onUpdat
     try {
       setLoading(true);
       await addMemberApi(groupData._id, userId);
-      onUpdate();
+      // We don't call onUpdate() here because the member list hasn't changed yet (only an invitation was sent)
       // Refresh available users
       setAvailableUsers(availableUsers.filter(u => u._id !== userId));
-      alert("Member added successfully");
+      alert("Invitation sent successfully! They will join once they accept.");
     } catch (err) {
-      alert("Failed to add member");
+      alert("Failed to send invitation");
     } finally {
       setLoading(false);
     }

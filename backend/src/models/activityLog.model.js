@@ -8,7 +8,7 @@ const activityLogSchema = new Schema({
     },
     action: {
         type: String,
-        enum: ["EXPENSE_CREATED", "EXPENSE_DELETED", "SETTLEMENT_CREATED", "MEMBER_ADDED", "MEMBER_REMOVED", "GROUP_CREATED"],
+        enum: ["EXPENSE_CREATED", "EXPENSE_DELETED", "SETTLEMENT_CREATED", "MEMBER_ADDED", "MEMBER_REMOVED", "GROUP_CREATED", "MEMBER_INVITED", "INVITE_REJECTED"],
         required: true
     },
     description: {
